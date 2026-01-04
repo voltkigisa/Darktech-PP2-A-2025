@@ -1,3 +1,4 @@
+-- Active: 1765715409176@@pongo.kencang.com@3306@academyc_tugas-pp2
 -- Library POS System Database Schema
 -- Run this script to create the database and tables
 
