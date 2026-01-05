@@ -408,26 +408,10 @@ public class AdminDashboardView extends JFrame {
     private void showKelolaBukuContent() {
         contentPanel.removeAll();
 
-        JPanel bukuPanel = new JPanel();
-        bukuPanel.setLayout(new BoxLayout(bukuPanel, BoxLayout.Y_AXIS));
-        bukuPanel.setBackground(Color.WHITE);
-        bukuPanel.setBorder(new EmptyBorder(100, 50, 100, 50));
+        com.library.pos.views.admin.books.IndexBookView bookView = 
+            new com.library.pos.views.admin.books.IndexBookView();
 
-        JLabel titleLabel = new JLabel("Manage Books");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        titleLabel.setForeground(new Color(31, 41, 55));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel messageLabel = new JLabel("Book management feature is under development");
-        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        messageLabel.setForeground(new Color(107, 114, 128));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        bukuPanel.add(titleLabel);
-        bukuPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        bukuPanel.add(messageLabel);
-
-        contentPanel.add(bukuPanel, BorderLayout.CENTER);
+        contentPanel.add(bookView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
