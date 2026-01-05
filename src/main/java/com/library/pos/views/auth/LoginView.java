@@ -26,7 +26,6 @@ public class LoginView extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Main gradient background panel
         JPanel bg = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -52,7 +51,6 @@ public class LoginView extends JFrame {
         };
         bg.setLayout(new GridBagLayout());
 
-        // Card with rounded corners and shadow
         RoundedPanel card = new RoundedPanel(20, new Color(255, 255, 255));
         card.setPreferredSize(new Dimension(520, 520));
         card.setLayout(new BorderLayout());
@@ -62,7 +60,6 @@ public class LoginView extends JFrame {
         content.setBorder(new EmptyBorder(36, 40, 40, 40));
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-        // top decorative half-circle
         JPanel topDecor = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -96,14 +93,13 @@ public class LoginView extends JFrame {
         content.add(lblSubtitle);
         content.add(Box.createRigidArea(new Dimension(0, 26)));
 
-        // Form
+
         JPanel form = new JPanel();
         form.setOpaque(false);
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setMaximumSize(new Dimension(320, Integer.MAX_VALUE));
         form.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Username label + field
         JLabel lblUser = new JLabel("Username");
         lblUser.setFont(new Font("Segoe UI", Font.BOLD, 12));
         lblUser.setForeground(new Color(51, 52, 60));
@@ -121,7 +117,6 @@ public class LoginView extends JFrame {
                 BorderFactory.createEmptyBorder(10, 16, 10, 16)
         ));
 
-        // Add placeholder functionality to username field
         txtUsername.addFocusListener(new java.awt.event.FocusAdapter() {
             private boolean isPlaceholder = true;
 
@@ -151,7 +146,6 @@ public class LoginView extends JFrame {
         form.add(txtUsername);
         form.add(Box.createRigidArea(new Dimension(0, 18)));
 
-        // Password label + field
         JLabel lblPass = new JLabel("Password");
         lblPass.setFont(new Font("Segoe UI", Font.BOLD, 12));
         lblPass.setForeground(new Color(51, 52, 60));
@@ -199,7 +193,6 @@ public class LoginView extends JFrame {
             }
         });
 
-        // Repaint when text changes to update placeholder visibility
         txtPassword.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void changedUpdate(javax.swing.event.DocumentEvent e) { txtPassword.repaint(); }
             public void insertUpdate(javax.swing.event.DocumentEvent e) { txtPassword.repaint(); }
@@ -219,17 +212,14 @@ public class LoginView extends JFrame {
         form.add(cbShowPassword);
         form.add(Box.createRigidArea(new Dimension(0, 30)));
 
-        // Spacer
         form.add(Box.createVerticalGlue());
 
-        // Login button
         GradientButton btnLogin = new GradientButton("Masuk");
         btnLogin.setPreferredSize(new Dimension(0, 44));
         btnLogin.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnLogin.addActionListener(e -> onLogin());
 
-        // Add everything
         content.add(form);
         content.add(btnLogin);
 
@@ -259,13 +249,11 @@ public class LoginView extends JFrame {
         System.out.println("Password length: " + password.length());
         System.out.println("Password value: '" + password + "'");
 
-        // Check if username is still showing placeholder
         if (username.equals("Masukkan username")) {
             username = "";
             System.out.println("Username was placeholder, cleared");
         }
 
-        // Password placeholder is visual only, no need to check text
 
         System.out.println("Final username: '" + username + "'");
         System.out.println("Final password: '" + password + "'");
@@ -278,32 +266,38 @@ public class LoginView extends JFrame {
             return;
         }
 
-        // Show loading cursor
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         try {
-            // Authenticate user against database
             User user = userDAO.authenticate(username, password);
 
             if (user != null) {
-                // Login successful
                 JOptionPane.showMessageDialog(this,
                     "Selamat datang, " + user.getName() + "!\nRole: " + user.getRole(),
                     "Login Berhasil",
                     JOptionPane.INFORMATION_MESSAGE);
 
-                // TODO: Open main application window based on user role
+                dispose();
 
+                SwingUtilities.invokeLater(() -> {
+                    if ("ADMIN".equalsIgnoreCase(user.getRole()) || "Administrator".equalsIgnoreCase(user.getRole())) {
+                        com.library.pos.views.admin.AdminDashboardView dashboard =
+                            new com.library.pos.views.admin.AdminDashboardView(user);
+                        dashboard.setVisible(true);
+                    } else if ("MANAGER".equalsIgnoreCase(user.getRole())) {
+                        com.library.pos.views.manager.ManagerDashboardView dashboard =
+                            new com.library.pos.views.manager.ManagerDashboardView(user);
+                        dashboard.setVisible(true);
+                    }
+                });
 
 
             } else {
-                // Login failed
                 JOptionPane.showMessageDialog(this,
                     "Username atau password salah!\nSilakan coba lagi.",
                     "Login Gagal",
                     JOptionPane.ERROR_MESSAGE);
 
-                // Clear password field (placeholder will show automatically)
                 txtPassword.setText("");
             }
 
@@ -315,12 +309,10 @@ public class LoginView extends JFrame {
             e.printStackTrace();
 
         } finally {
-            // Restore normal cursor
             setCursor(Cursor.getDefaultCursor());
         }
     }
 
-    // Simple rounded panel with shadow
     static class RoundedPanel extends JPanel {
         private final int radius;
         private final Color backgroundColor;
@@ -339,7 +331,6 @@ public class LoginView extends JFrame {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // draw shadow (soft)
             g2.setColor(new Color(38, 34, 66, 80));
             for (int i = 0; i < 6; i++) {
                 int alpha = 80 - i * 12;
@@ -347,7 +338,6 @@ public class LoginView extends JFrame {
                 g2.fillRoundRect(6 - i, 6 - i, w - (12 - i * 2), h - (12 - i * 2), radius + 6, radius + 6);
             }
 
-            // draw rounded panel
             g2.setColor(backgroundColor);
             g2.fillRoundRect(0, 0, w - 12, h - 12, radius, radius);
 
@@ -361,7 +351,6 @@ public class LoginView extends JFrame {
         }
     }
 
-    // Button with gradient background
     static class GradientButton extends JButton {
         public GradientButton(String text) {
             super(text);
@@ -386,7 +375,6 @@ public class LoginView extends JFrame {
             g2.setPaint(gp);
             g2.fillRoundRect(0, 0, w, h, 12, 12);
 
-            // draw text
             FontMetrics fm = g2.getFontMetrics();
             Rectangle r = new Rectangle(0, 0, w, h);
             int textY = (r.height - fm.getHeight()) / 2 + fm.getAscent();
@@ -401,7 +389,6 @@ public class LoginView extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Set system look and feel if possible
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {
