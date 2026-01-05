@@ -351,78 +351,11 @@ public class ManagerDashboardView extends JFrame {
 
     private void showCategories() {
         contentPanel.removeAll();
-        
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(248, 249, 250));
 
-        // Header Panel
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(Color.WHITE);
-        headerPanel.setBorder(new EmptyBorder(25, 30, 25, 30));
+        com.library.pos.views.manager.categories.IndexCategoryView categoryView = 
+            new com.library.pos.views.manager.categories.IndexCategoryView();
 
-        JLabel titleLabel = new JLabel("Categories");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titleLabel.setForeground(new Color(33, 37, 41));
-
-        JButton backButton = new JButton("← Kembali") {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(getBackground());
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-                g2.setColor(getForeground());
-                FontMetrics fm = g2.getFontMetrics();
-                String text = getText();
-                int x = (getWidth() - fm.stringWidth(text)) / 2;
-                int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
-                g2.drawString(text, x, y);
-                g2.dispose();
-            }
-        };
-        backButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        backButton.setForeground(Color.WHITE);
-        backButton.setBackground(new Color(108, 117, 125));
-        backButton.setFocusPainted(false);
-        backButton.setBorderPainted(false);
-        backButton.setContentAreaFilled(false);
-        backButton.setPreferredSize(new Dimension(120, 38));
-        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        backButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                backButton.setBackground(new Color(90, 98, 104));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                backButton.setBackground(new Color(108, 117, 125));
-            }
-        });
-        
-        backButton.addActionListener(e -> showDashboard());
-
-        headerPanel.add(titleLabel, BorderLayout.WEST);
-        headerPanel.add(backButton, BorderLayout.EAST);
-
-        // Content Panel
-        JPanel contentPanelInner = new JPanel();
-        contentPanelInner.setLayout(new BoxLayout(contentPanelInner, BoxLayout.Y_AXIS));
-        contentPanelInner.setBackground(Color.WHITE);
-        contentPanelInner.setBorder(new EmptyBorder(100, 50, 100, 50));
-
-        JLabel messageLabel = new JLabel("Category management feature is under development");
-        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        messageLabel.setForeground(new Color(107, 114, 128));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        contentPanelInner.add(messageLabel);
-
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
-        mainPanel.add(contentPanelInner, BorderLayout.CENTER);
-
-        contentPanel.add(mainPanel, BorderLayout.CENTER);
+        contentPanel.add(categoryView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
