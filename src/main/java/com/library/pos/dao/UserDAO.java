@@ -88,6 +88,47 @@ public class UserDAO {
     }
 
     /**
+     * Authenticate user with username and password
+     *
+     * @param username The username to authenticate
+     * @param password The password to check
+     * @return User object if authentication successful, null otherwise
+     */
+    public User authenticate(String username, String password) {
+        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+        User user = null;
+
+        System.out.println("=== AUTHENTICATE DEBUG ===");
+        System.out.println("Username: '" + username + "'");
+        System.out.println("Password: '" + password + "'");
+
+        try (Connection conn = dbConfig.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            System.out.println("Database connection successful!");
+
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+
+            System.out.println("Executing query: " + query);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                user = mapResultSetToUser(rs);
+                System.out.println("User found: " + user.getName() + " (" + user.getRole() + ")");
+            } else {
+                System.out.println("No user found with these credentials");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error authenticating user: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        System.out.println("=== END DEBUG ===");
+        return user;
+    }
+
+    /**
      * Create new user
      */
     public boolean create(User user) {
