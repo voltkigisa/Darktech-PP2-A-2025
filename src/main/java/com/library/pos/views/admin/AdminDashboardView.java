@@ -433,31 +433,17 @@ public class AdminDashboardView extends JFrame {
     }
 
     private void showKelolaAnggotaContent() {
-        contentPanel.removeAll();
+    contentPanel.removeAll(); // Hapus tulisan "sedang dalam pengembangan"
 
-        JPanel anggotaPanel = new JPanel();
-        anggotaPanel.setLayout(new BoxLayout(anggotaPanel, BoxLayout.Y_AXIS));
-        anggotaPanel.setBackground(Color.WHITE);
-        anggotaPanel.setBorder(new EmptyBorder(100, 50, 100, 50));
+    // Panggil tampilan KelolaMemberView yang sudah kita perbaiki tadi
+    com.library.pos.views.admin.member.KelolaMemberView memberView = 
+        new com.library.pos.views.admin.member.KelolaMemberView();
 
-        JLabel titleLabel = new JLabel("Manage Members");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        titleLabel.setForeground(new Color(31, 41, 55));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel messageLabel = new JLabel("Member management feature is under development");
-        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        messageLabel.setForeground(new Color(107, 114, 128));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        anggotaPanel.add(titleLabel);
-        anggotaPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        anggotaPanel.add(messageLabel);
-
-        contentPanel.add(anggotaPanel, BorderLayout.CENTER);
-        contentPanel.revalidate();
-        contentPanel.repaint();
-    }
+    contentPanel.add(memberView, BorderLayout.CENTER); // Masukkan form & tabel ke dashboard
+    
+    contentPanel.revalidate();
+    contentPanel.repaint();
+}
 
     private void showTransaksiContent() {
         contentPanel.removeAll();
