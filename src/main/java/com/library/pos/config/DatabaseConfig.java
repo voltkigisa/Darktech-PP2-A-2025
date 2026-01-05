@@ -10,7 +10,6 @@ import java.sql.SQLException;
  */
 public class DatabaseConfig {
 
-    // Database connection parameters
     private static final String HOST = "pongo.kencang.com";
     private static final String PORT = "3306";
     private static final String DATABASE = "academyc_tugas-pp2";

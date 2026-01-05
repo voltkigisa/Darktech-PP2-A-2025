@@ -292,9 +292,28 @@ public class LoginView extends JFrame {
                     "Login Berhasil",
                     JOptionPane.INFORMATION_MESSAGE);
 
-                // TODO: Open main application window based on user role
+                // Open dashboard based on user role
+                dispose(); // Close login window
 
-
+                if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+                    SwingUtilities.invokeLater(() -> {
+                        com.library.pos.views.admin.AdminDashboardView adminDashboard =
+                            new com.library.pos.views.admin.AdminDashboardView(user);
+                        adminDashboard.setVisible(true);
+                    });
+                } else if ("MANAGER".equalsIgnoreCase(user.getRole())) {
+                    SwingUtilities.invokeLater(() -> {
+                        com.library.pos.views.manager.ManagerDashboardView managerDashboard =
+                            new com.library.pos.views.manager.ManagerDashboardView(user);
+                        managerDashboard.setVisible(true);
+                    });
+                } else {
+                    // For other roles, show coming soon message
+                    JOptionPane.showMessageDialog(null,
+                        "Dashboard untuk role " + user.getRole() + " sedang dalam pengembangan.",
+                        "Info",
+                        JOptionPane.INFORMATION_MESSAGE);
+                }
 
             } else {
                 // Login failed
