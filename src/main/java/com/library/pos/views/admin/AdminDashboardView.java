@@ -489,26 +489,10 @@ public class AdminDashboardView extends JFrame {
     private void showCategoriesContent() {
         contentPanel.removeAll();
 
-        JPanel categoriesPanel = new JPanel();
-        categoriesPanel.setLayout(new BoxLayout(categoriesPanel, BoxLayout.Y_AXIS));
-        categoriesPanel.setBackground(Color.WHITE);
-        categoriesPanel.setBorder(new EmptyBorder(100, 50, 100, 50));
+        com.library.pos.views.admin.categories.IndexCategoryView categoryPanel = 
+            new com.library.pos.views.admin.categories.IndexCategoryView();
 
-        JLabel titleLabel = new JLabel("Categories");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        titleLabel.setForeground(new Color(31, 41, 55));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel messageLabel = new JLabel("Category management feature is under development");
-        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        messageLabel.setForeground(new Color(107, 114, 128));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        categoriesPanel.add(titleLabel);
-        categoriesPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        categoriesPanel.add(messageLabel);
-
-        contentPanel.add(categoriesPanel, BorderLayout.CENTER);
+        contentPanel.add(categoryPanel, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
