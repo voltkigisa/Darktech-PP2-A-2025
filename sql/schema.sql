@@ -16,6 +16,14 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS members (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    kode_anggota VARCHAR(20) UNIQUE NOT NULL,
+    nama VARCHAR(100) NOT NULL,
+    alamat TEXT,
+    telepon VARCHAR(15),
+    status ENUM('AKTIF', 'NONAKTIF') DEFAULT 'AKTIF'
+);
 -- Insert sample users
 INSERT INTO
     users (
