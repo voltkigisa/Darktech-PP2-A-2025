@@ -333,9 +333,11 @@ public class ManagerDashboardView extends JFrame {
 
     private void showLihatBuku() {
         contentPanel.removeAll();
-        LihatBukuView lihatBukuView = new LihatBukuView(currentUser);
-        lihatBukuView.setOnBackCallback(() -> showDashboard());
-        contentPanel.add(lihatBukuView, BorderLayout.CENTER);
+
+        com.library.pos.views.manager.books.IndexBookView bookView = 
+            new com.library.pos.views.manager.books.IndexBookView();
+
+        contentPanel.add(bookView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
