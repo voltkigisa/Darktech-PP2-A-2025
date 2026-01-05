@@ -15,38 +15,34 @@ import java.util.List;
 /**
  * IndexUserView - Main list view for User management (Admin only)
  */
-public class IndexUserView extends JFrame {
+public class IndexUserView extends JPanel {
     private AdminUserController controller;
     private JTable userTable;
     private DefaultTableModel tableModel;
     private JButton btnAdd;
 
-    // Color scheme
-    private final Color PRIMARY_COLOR = new Color(41, 128, 185);
-    private final Color SUCCESS_COLOR = new Color(39, 174, 96);
-    private final Color DANGER_COLOR = new Color(231, 76, 60);
-    private final Color INFO_COLOR = new Color(142, 68, 173);
-    private final Color DARK_COLOR = new Color(44, 62, 80);
-    private final Color LIGHT_BG = new Color(236, 240, 241);
+    // Color scheme - matching dashboard
+    private final Color PRIMARY_COLOR = new Color(59, 130, 246);
+    private final Color SUCCESS_COLOR = new Color(16, 185, 129);
+    private final Color DANGER_COLOR = new Color(239, 68, 68);
+    private final Color INFO_COLOR = new Color(139, 92, 246);
+    private final Color DARK_COLOR = new Color(31, 41, 55);
+    private final Color LIGHT_BG = new Color(249, 250, 251);
 
     public IndexUserView() {
         this.controller = new AdminUserController();
         initComponents();
         loadData();
-        setLocationRelativeTo(null);
     }
 
     private void initComponents() {
-        setTitle("Manajemen Users - Library POS System");
-        setSize(1200, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(0, 0));
-        getContentPane().setBackground(LIGHT_BG);
+        setBackground(LIGHT_BG);
 
         add(createHeaderPanel(), BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
-        mainPanel.setBackground(DARK_COLOR);
+        mainPanel.setBackground(Color.WHITE);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         mainPanel.add(createTablePanel(), BorderLayout.CENTER);
 
@@ -55,21 +51,21 @@ public class IndexUserView extends JFrame {
 
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(DARK_COLOR);
+        headerPanel.setBackground(Color.WHITE);
         headerPanel.setPreferredSize(new Dimension(0, 90));
         headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        titlePanel.setBackground(DARK_COLOR);
+        titlePanel.setBackground(Color.WHITE);
 
         JLabel lblTitle = new JLabel("MANAJEMEN USERS");
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        lblTitle.setForeground(Color.WHITE);
+        lblTitle.setForeground(DARK_COLOR);
 
         JLabel lblSubtitle = new JLabel("Kelola Data Admin dan Manager Sistem");
         lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        lblSubtitle.setForeground(new Color(189, 195, 199));
+        lblSubtitle.setForeground(new Color(107, 114, 128));
 
         titlePanel.add(lblTitle);
         titlePanel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -130,7 +126,6 @@ public class IndexUserView extends JFrame {
 
         userTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
         userTable.getTableHeader().setBackground(DARK_COLOR);
-        userTable.getTableHeader().setForeground(Color.WHITE);
         userTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
         userTable.getTableHeader().setReorderingAllowed(false);
 
@@ -336,16 +331,5 @@ public class IndexUserView extends JFrame {
         public Object getCellEditorValue() {
             return userId;
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            new IndexUserView().setVisible(true);
-        });
     }
 }

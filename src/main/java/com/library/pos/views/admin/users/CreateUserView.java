@@ -24,7 +24,7 @@ public class CreateUserView extends JDialog {
     private final Color LIGHT_BG = new Color(236, 240, 241);
 
     public CreateUserView(IndexUserView parent) {
-        super(parent, "Tambah User Baru", true);
+        super(SwingUtilities.getWindowAncestor(parent), "Tambah User Baru", ModalityType.APPLICATION_MODAL);
         this.parentView = parent;
         this.controller = new AdminUserController();
         initComponents();
