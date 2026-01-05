@@ -32,8 +32,8 @@ public class CreateUserView extends JDialog {
     }
 
     private void initComponents() {
-        setSize(550, 700);
-        setResizable(false);
+        setSize(600, 800);
+        setResizable(true);
         setLayout(new BorderLayout(0, 0));
         getContentPane().setBackground(LIGHT_BG);
 
@@ -98,7 +98,10 @@ public class CreateUserView extends JDialog {
         cbRole.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
         formContainer.add(createFormField("Role *", cbRole, "Pilih role untuk user (ADMIN atau MANAGER)"));
 
-        mainPanel.add(formContainer, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(formContainer);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         return mainPanel;
     }
