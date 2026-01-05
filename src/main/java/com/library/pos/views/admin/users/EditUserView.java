@@ -26,7 +26,7 @@ public class EditUserView extends JDialog {
     private final Color LIGHT_BG = new Color(236, 240, 241);
 
     public EditUserView(IndexUserView parent, User user) {
-        super(parent, "Edit Data User", true);
+        super(SwingUtilities.getWindowAncestor(parent), "Edit Data User", ModalityType.APPLICATION_MODAL);
         this.parentView = parent;
         this.user = user;
         this.controller = new AdminUserController();

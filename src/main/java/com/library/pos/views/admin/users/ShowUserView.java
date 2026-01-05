@@ -21,7 +21,7 @@ public class ShowUserView extends JDialog {
     private final Color INFO_BG = new Color(52, 152, 219, 20);
 
     public ShowUserView(IndexUserView parent, User user) {
-        super(parent, "Detail User", true);
+        super(SwingUtilities.getWindowAncestor(parent), "Detail User", ModalityType.APPLICATION_MODAL);
         this.parentView = parent;
         this.user = user;
         initComponents();
