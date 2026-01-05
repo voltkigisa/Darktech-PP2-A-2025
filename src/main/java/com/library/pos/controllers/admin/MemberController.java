@@ -14,27 +14,39 @@ public class MemberController {
         try {
             List<Member> list = memberDAO.getAll();
             for (Member m : list) {
-                model.addRow(new Object[]{m.getId(), m.getNama(), m.getTelepon(), m.getAlamat()});
+                // Menyesuaikan dengan getter baru di model Member
+                model.addRow(new Object[]{
+                    m.getId(),
+                    m.getMember_code(),
+                    m.getName(), 
+                    m.getAge(), 
+                    m.getPhone(), 
+                    m.getAddress()
+                });
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public boolean save(String nama, String telp, String alamat) {
+    // Menambah parameter 'age' agar sesuai dengan database & model
+    public boolean save(String member_code, String name, String age, String phone, String address) {
         try {
-            memberDAO.insert(new Member(0, nama, telp, alamat));
+            memberDAO.insert(new Member(0, member_code, name, age, phone, address));
             return true;
         } catch (SQLException e) { 
+            e.printStackTrace();
             return false; 
         }
     }
 
-    public boolean update(int id, String nama, String telp, String alamat) {
+    // Menambah parameter 'age' dan menyesuaikan constructor Member
+    public boolean update(int id, String member_code, String name, String age, String phone, String address) {
         try {
-            memberDAO.update(new Member(id, nama, telp, alamat));
+            memberDAO.update(new Member(id, member_code, name, age, phone, address));
             return true;
         } catch (SQLException e) { 
+            e.printStackTrace();
             return false; 
         }
     }
@@ -44,6 +56,7 @@ public class MemberController {
             memberDAO.delete(id);
             return true;
         } catch (SQLException e) { 
+            e.printStackTrace();
             return false; 
         }
     }
