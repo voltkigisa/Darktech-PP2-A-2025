@@ -27,7 +27,6 @@ public class LihatAnggotaView extends JPanel {
     }
 
     private void initComponents() {
-        // Header Panel
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(new EmptyBorder(25, 40, 25, 40));
@@ -54,11 +53,9 @@ public class LihatAnggotaView extends JPanel {
 
         headerPanel.add(titlePanel, BorderLayout.WEST);
 
-        // Back Button
         JButton backButton = createBackButton();
         headerPanel.add(backButton, BorderLayout.EAST);
 
-        // Content Panel
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
