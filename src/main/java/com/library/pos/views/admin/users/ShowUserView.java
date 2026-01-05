@@ -29,8 +29,8 @@ public class ShowUserView extends JDialog {
     }
 
     private void initComponents() {
-        setSize(600, 750);
-        setResizable(false);
+        setSize(650, 800);
+        setResizable(true);
         setLayout(new BorderLayout(0, 0));
         getContentPane().setBackground(LIGHT_BG);
 
@@ -57,14 +57,14 @@ public class ShowUserView extends JDialog {
     private JPanel createDetailPanel() {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(LIGHT_BG);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 60, 25, 60));
 
         JPanel detailContainer = new JPanel();
         detailContainer.setLayout(new BoxLayout(detailContainer, BoxLayout.Y_AXIS));
         detailContainer.setBackground(Color.WHITE);
         detailContainer.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(35, 35, 35, 35)
+                BorderFactory.createEmptyBorder(40, 50, 40, 50)
         ));
 
         // Profile icon
@@ -101,7 +101,10 @@ public class ShowUserView extends JDialog {
                 user.getUpdatedAt().toString().substring(0, 19).replace("T", " ") : "-";
         detailContainer.add(createDetailField("Terakhir Diupdate", updatedAt));
 
-        mainPanel.add(detailContainer, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(detailContainer);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         return mainPanel;
     }
@@ -114,18 +117,18 @@ public class ShowUserView extends JDialog {
                 BorderFactory.createLineBorder(new Color(52, 152, 219), 1),
                 BorderFactory.createEmptyBorder(12, 15, 12, 15)
         ));
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 
         JLabel lblLabel = new JLabel(label);
         lblLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
         lblLabel.setForeground(new Color(52, 73, 94));
-        lblLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblValue = new JLabel(value);
         lblValue.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         lblValue.setForeground(DARK_COLOR);
-        lblValue.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblValue.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         panel.add(lblLabel);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));

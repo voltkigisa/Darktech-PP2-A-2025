@@ -59,7 +59,7 @@ public class ManagerDashboardView extends JFrame {
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         centerPanel.setOpaque(false);
 
-        JLabel greetingLabel = new JLabel("Selamat datang, Library Manager");
+        JLabel greetingLabel = new JLabel("Welcome, Library Manager");
         greetingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         greetingLabel.setForeground(Color.WHITE);
 
@@ -120,8 +120,8 @@ public class ManagerDashboardView extends JFrame {
 
         button.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this,
-                "Apakah Anda yakin ingin logout?",
-                "Konfirmasi Logout",
+                "Are you sure you want to logout?",
+                "Logout Confirmation",
                 JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
@@ -148,12 +148,12 @@ public class ManagerDashboardView extends JFrame {
         textContainer.setBackground(Color.WHITE);
         textContainer.setAlignmentY(Component.TOP_ALIGNMENT);
 
-        JLabel titleLabel = new JLabel("Selamat Datang di Library POS System!");
+        JLabel titleLabel = new JLabel("Welcome to Library POS System!");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setForeground(new Color(33, 37, 41));
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel descLabel = new JLabel("Anda login sebagai Manager. Anda dapat mengelola transaksi peminjaman dan pengembalian buku.");
+        JLabel descLabel = new JLabel("You are logged in as Manager. You can manage book loans and returns.");
         descLabel.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         descLabel.setForeground(new Color(108, 117, 125));
         descLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -169,38 +169,46 @@ public class ManagerDashboardView extends JFrame {
     }
 
     private JPanel createCardsPanel() {
-        JPanel panel = new JPanel(new GridLayout(2, 2, 30, 30));
+        JPanel panel = new JPanel(new GridLayout(2, 3, 30, 30));
         panel.setBackground(new Color(248, 249, 250));
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 500));
 
-        // Card 1 - Lihat Buku
+        // Card 1 - View Books
         panel.add(createFeatureCard(
-            "Lihat Buku",
-            "Lihat daftar buku yang tersedia",
+            "View Books",
+            "View available books list",
             new Color(0, 123, 255),
             ""
         ));
 
-        // Card 2 - Lihat Anggota
+        // Card 2 - View Members
         panel.add(createFeatureCard(
-            "Lihat Anggota",
-            "Lihat data anggota perpustakaan",
+            "View Members",
+            "View library members data",
             new Color(40, 167, 69),
             ""
         ));
 
-        // Card 3 - Transaksi
+        // Card 3 - Categories
         panel.add(createFeatureCard(
-            "Transaksi",
-            "Peminjaman dan pengembalian buku",
+            "Categories",
+            "Manage book categories",
+            new Color(108, 99, 255),
+            ""
+        ));
+
+        // Card 4 - Transactions
+        panel.add(createFeatureCard(
+            "Transactions",
+            "Book loans and returns",
             new Color(255, 193, 7),
             ""
         ));
 
-        // Card 4 - Laporan
+        // Card 5 - Reports
         panel.add(createFeatureCard(
-            "Laporan",
-            "Lihat laporan transaksi",
+            "Reports",
+            "View transaction reports",
             new Color(23, 162, 184),
             ""
         ));
@@ -276,21 +284,24 @@ public class ManagerDashboardView extends JFrame {
 
     private void handleCardClick(String cardTitle) {
         switch (cardTitle) {
-            case "Lihat Buku":
+            case "View Books":
                 showLihatBuku();
                 break;
-            case "Lihat Anggota":
+            case "View Members":
                 showLihatAnggota();
                 break;
-            case "Transaksi":
+            case "Categories":
+                showCategories();
+                break;
+            case "Transactions":
                 showTransaksi();
                 break;
-            case "Laporan":
+            case "Reports":
                 showLaporan();
                 break;
             default:
                 JOptionPane.showMessageDialog(this,
-                    "Fitur " + cardTitle + " sedang dalam pengembangan",
+                    "Feature " + cardTitle + " is under development",
                     "Info",
                     JOptionPane.INFORMATION_MESSAGE);
                 break;
@@ -334,6 +345,84 @@ public class ManagerDashboardView extends JFrame {
         LihatAnggotaView lihatAnggotaView = new LihatAnggotaView(currentUser);
         lihatAnggotaView.setOnBackCallback(() -> showDashboard());
         contentPanel.add(lihatAnggotaView, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    private void showCategories() {
+        contentPanel.removeAll();
+        
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(new Color(248, 249, 250));
+
+        // Header Panel
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setBorder(new EmptyBorder(25, 30, 25, 30));
+
+        JLabel titleLabel = new JLabel("Categories");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setForeground(new Color(33, 37, 41));
+
+        JButton backButton = new JButton("← Kembali") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
+                g2.setColor(getForeground());
+                FontMetrics fm = g2.getFontMetrics();
+                String text = getText();
+                int x = (getWidth() - fm.stringWidth(text)) / 2;
+                int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+                g2.drawString(text, x, y);
+                g2.dispose();
+            }
+        };
+        backButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        backButton.setForeground(Color.WHITE);
+        backButton.setBackground(new Color(108, 117, 125));
+        backButton.setFocusPainted(false);
+        backButton.setBorderPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setPreferredSize(new Dimension(120, 38));
+        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        backButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                backButton.setBackground(new Color(90, 98, 104));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                backButton.setBackground(new Color(108, 117, 125));
+            }
+        });
+        
+        backButton.addActionListener(e -> showDashboard());
+
+        headerPanel.add(titleLabel, BorderLayout.WEST);
+        headerPanel.add(backButton, BorderLayout.EAST);
+
+        // Content Panel
+        JPanel contentPanelInner = new JPanel();
+        contentPanelInner.setLayout(new BoxLayout(contentPanelInner, BoxLayout.Y_AXIS));
+        contentPanelInner.setBackground(Color.WHITE);
+        contentPanelInner.setBorder(new EmptyBorder(100, 50, 100, 50));
+
+        JLabel messageLabel = new JLabel("Category management feature is under development");
+        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        messageLabel.setForeground(new Color(107, 114, 128));
+        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        contentPanelInner.add(messageLabel);
+
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+        mainPanel.add(contentPanelInner, BorderLayout.CENTER);
+
+        contentPanel.add(mainPanel, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }

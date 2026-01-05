@@ -78,15 +78,18 @@ public class AdminDashboardView extends JFrame {
         menuPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
         JButton btnDashboard = createMenuButton("", "Dashboard", true);
-        JButton btnKelolaMgr = createMenuButton("", "Kelola Manager", false);
-        JButton btnBuku = createMenuButton("", "Kelola Buku", false);
-        JButton btnAnggota = createMenuButton("", "Kelola Anggota", false);
-        JButton btnTransaksi = createMenuButton("", "Transaksi", false);
-        JButton btnLaporan = createMenuButton("", "Laporan", false);
+        JButton btnKelolaMgr = createMenuButton("", "Manage Managers", false);
+        JButton btnCategories = createMenuButton("", "Categories", false);
+        JButton btnBuku = createMenuButton("", "Manage Books", false);
+        JButton btnAnggota = createMenuButton("", "Manage Members", false);
+        JButton btnTransaksi = createMenuButton("", "Transactions", false);
+        JButton btnLaporan = createMenuButton("", "Reports", false);
 
         menuPanel.add(btnDashboard);
         menuPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         menuPanel.add(btnKelolaMgr);
+        menuPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        menuPanel.add(btnCategories);
         menuPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         menuPanel.add(btnBuku);
         menuPanel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -195,19 +198,22 @@ public class AdminDashboardView extends JFrame {
                 case "Dashboard":
                     showDashboardContent();
                     break;
-                case "Kelola Manager":
+                case "Manage Managers":
                     showKelolaManagerContent();
                     break;
-                case "Kelola Buku":
+                case "Categories":
+                    showCategoriesContent();
+                    break;
+                case "Manage Books":
                     showKelolaBukuContent();
                     break;
-                case "Kelola Anggota":
+                case "Manage Members":
                     showKelolaAnggotaContent();
                     break;
-                case "Transaksi":
+                case "Transactions":
                     showTransaksiContent();
                     break;
-                case "Laporan":
+                case "Reports":
                     showLaporanContent();
                     break;
                 default:
@@ -232,8 +238,8 @@ public class AdminDashboardView extends JFrame {
         JButton logoutButton = createStyledButton("Logout", new Color(239, 68, 68));
         logoutButton.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this,
-                "Apakah Anda yakin ingin logout?",
-                "Konfirmasi Logout",
+                "Are you sure you want to logout?",
+                "Logout Confirmation",
                 JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
@@ -310,12 +316,12 @@ public class AdminDashboardView extends JFrame {
         // Convert role to friendly display name
         String displayRole = currentUser.getRole().equals("ADMIN") ? "Administrator" : currentUser.getRole();
 
-        JLabel welcomeLabel = new JLabel("Selamat Datang, " + displayRole + "! ");
+        JLabel welcomeLabel = new JLabel("Welcome, " + displayRole + "! ");
         welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         welcomeLabel.setForeground(new Color(31, 41, 55));
         welcomeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel descLabel = new JLabel("Anda login sebagai " + displayRole + ". Kelola sistem perpustakaan dengan mudah.");
+        JLabel descLabel = new JLabel("You are logged in as " + displayRole + ". Manage the library system with ease.");
         descLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         descLabel.setForeground(new Color(107, 114, 128));
         descLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -330,10 +336,10 @@ public class AdminDashboardView extends JFrame {
         statsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
         statsPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
-        statsPanel.add(createStatCard("", "Total Buku", "0", new Color(59, 130, 246)));
-        statsPanel.add(createStatCard("", "Total Anggota", "0", new Color(16, 185, 129)));
-        statsPanel.add(createStatCard("", "Peminjaman Aktif", "0", new Color(245, 158, 11)));
-        statsPanel.add(createStatCard("", "Total Manager", "1", new Color(139, 92, 246)));
+        statsPanel.add(createStatCard("", "Total Books", "0", new Color(59, 130, 246)));
+        statsPanel.add(createStatCard("", "Total Members", "0", new Color(16, 185, 129)));
+        statsPanel.add(createStatCard("", "Active Loans", "0", new Color(245, 158, 11)));
+        statsPanel.add(createStatCard("", "Total Managers", "1", new Color(139, 92, 246)));
 
         dashboardPanel.add(welcomePanel);
         dashboardPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -407,12 +413,12 @@ public class AdminDashboardView extends JFrame {
         bukuPanel.setBackground(Color.WHITE);
         bukuPanel.setBorder(new EmptyBorder(100, 50, 100, 50));
 
-        JLabel titleLabel = new JLabel("Kelola Buku");
+        JLabel titleLabel = new JLabel("Manage Books");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
         titleLabel.setForeground(new Color(31, 41, 55));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel messageLabel = new JLabel("Fitur manajemen buku sedang dalam pengembangan");
+        JLabel messageLabel = new JLabel("Book management feature is under development");
         messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         messageLabel.setForeground(new Color(107, 114, 128));
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -447,12 +453,12 @@ public class AdminDashboardView extends JFrame {
         transaksiPanel.setBackground(Color.WHITE);
         transaksiPanel.setBorder(new EmptyBorder(100, 50, 100, 50));
 
-        JLabel titleLabel = new JLabel("Transaksi");
+        JLabel titleLabel = new JLabel("Transactions");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
         titleLabel.setForeground(new Color(31, 41, 55));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel messageLabel = new JLabel("Fitur transaksi peminjaman sedang dalam pengembangan");
+        JLabel messageLabel = new JLabel("Loan transaction feature is under development");
         messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         messageLabel.setForeground(new Color(107, 114, 128));
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -466,6 +472,33 @@ public class AdminDashboardView extends JFrame {
         contentPanel.repaint();
     }
 
+    private void showCategoriesContent() {
+        contentPanel.removeAll();
+
+        JPanel categoriesPanel = new JPanel();
+        categoriesPanel.setLayout(new BoxLayout(categoriesPanel, BoxLayout.Y_AXIS));
+        categoriesPanel.setBackground(Color.WHITE);
+        categoriesPanel.setBorder(new EmptyBorder(100, 50, 100, 50));
+
+        JLabel titleLabel = new JLabel("Categories");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
+        titleLabel.setForeground(new Color(31, 41, 55));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel messageLabel = new JLabel("Category management feature is under development");
+        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        messageLabel.setForeground(new Color(107, 114, 128));
+        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        categoriesPanel.add(titleLabel);
+        categoriesPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        categoriesPanel.add(messageLabel);
+
+        contentPanel.add(categoriesPanel, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
     private void showLaporanContent() {
         contentPanel.removeAll();
 
@@ -474,12 +507,12 @@ public class AdminDashboardView extends JFrame {
         laporanPanel.setBackground(Color.WHITE);
         laporanPanel.setBorder(new EmptyBorder(100, 50, 100, 50));
 
-        JLabel titleLabel = new JLabel("Laporan");
+        JLabel titleLabel = new JLabel("Reports");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
         titleLabel.setForeground(new Color(31, 41, 55));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel messageLabel = new JLabel("Fitur laporan sedang dalam pengembangan");
+        JLabel messageLabel = new JLabel("Report feature is under development");
         messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         messageLabel.setForeground(new Color(107, 114, 128));
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -506,7 +539,7 @@ public class AdminDashboardView extends JFrame {
         titleLabel.setForeground(new Color(31, 41, 55));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel messageLabel = new JLabel("Fitur ini sedang dalam pengembangan");
+        JLabel messageLabel = new JLabel("This feature is under development");
         messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         messageLabel.setForeground(new Color(107, 114, 128));
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
