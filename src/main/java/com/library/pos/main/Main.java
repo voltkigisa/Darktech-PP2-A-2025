@@ -1,6 +1,6 @@
 package com.library.pos.main;
 
-import com.library.pos.views.admin.users.IndexUserView;
+import com.library.pos.views.auth.LoginView;
 
 import javax.swing.*;
 
@@ -20,9 +20,9 @@ public class Main {
         
         // Run on Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
-            // Test User CRUD system
-            IndexUserView userView = new IndexUserView();
-            userView.setVisible(true);
+            // Show Login screen first
+            LoginView loginView = new LoginView();
+            loginView.setVisible(true);
         });
     }
 }
