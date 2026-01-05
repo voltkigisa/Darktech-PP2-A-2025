@@ -390,37 +390,9 @@ public class AdminDashboardView extends JFrame {
     private void showKelolaManagerContent() {
         contentPanel.removeAll();
 
-        // Create placeholder panel for user management
-        JPanel userPanel = new JPanel();
-        userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.Y_AXIS));
-        userPanel.setBackground(Color.WHITE);
-        userPanel.setBorder(new EmptyBorder(50, 50, 50, 50));
-
-        JLabel titleLabel = new JLabel("Kelola Manager");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        titleLabel.setForeground(new Color(31, 41, 55));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel messageLabel = new JLabel("Klik tombol di bawah untuk mengelola user/manager");
-        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        messageLabel.setForeground(new Color(107, 114, 128));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JButton openUserManagementBtn = createStyledButton("Buka Kelola User", new Color(59, 130, 246));
-        openUserManagementBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        openUserManagementBtn.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> {
-                com.library.pos.views.admin.users.IndexUserView userView =
-                    new com.library.pos.views.admin.users.IndexUserView();
-                userView.setVisible(true);
-            });
-        });
-
-        userPanel.add(titleLabel);
-        userPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        userPanel.add(messageLabel);
-        userPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        userPanel.add(openUserManagementBtn);
+        // Directly embed the user management panel
+        com.library.pos.views.admin.users.IndexUserView userPanel = 
+            new com.library.pos.views.admin.users.IndexUserView();
 
         contentPanel.add(userPanel, BorderLayout.CENTER);
         contentPanel.revalidate();
