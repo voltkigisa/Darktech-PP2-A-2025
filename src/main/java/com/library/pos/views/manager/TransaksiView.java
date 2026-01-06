@@ -1,6 +1,7 @@
 package com.library.pos.views.manager;
 
 import com.library.pos.models.User;
+import com.library.pos.views.manager.borrowings.IndexBorrowingView;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -30,14 +31,14 @@ public class TransaksiView extends JPanel {
         // Header Panel
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
-        headerPanel.setBorder(new EmptyBorder(25, 40, 25, 40));
+        headerPanel.setBorder(new EmptyBorder(15, 30, 15, 30));
 
         JLabel titleLabel = new JLabel("Transaksi");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titleLabel.setForeground(new Color(33, 37, 41));
 
         JLabel descLabel = new JLabel("Peminjaman dan pengembalian buku");
-        descLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        descLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         descLabel.setForeground(new Color(108, 117, 125));
 
         JPanel titlePanel = new JPanel();
@@ -49,7 +50,7 @@ public class TransaksiView extends JPanel {
         descLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         titlePanel.add(titleLabel);
-        titlePanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        titlePanel.add(Box.createRigidArea(new Dimension(0, 3)));
         titlePanel.add(descLabel);
 
         headerPanel.add(titlePanel, BorderLayout.WEST);
@@ -58,23 +59,11 @@ public class TransaksiView extends JPanel {
         JButton backButton = createBackButton();
         headerPanel.add(backButton, BorderLayout.EAST);
 
-        // Content Panel
-        JPanel contentPanel = new JPanel();
-        contentPanel.setBackground(Color.WHITE);
-        contentPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-
-        JLabel infoLabel = new JLabel("Fitur transaksi sedang dalam pengembangan");
-        infoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        infoLabel.setForeground(new Color(108, 117, 125));
-        infoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        contentPanel.add(Box.createVerticalGlue());
-        contentPanel.add(infoLabel);
-        contentPanel.add(Box.createVerticalGlue());
+        // Content Panel - embed IndexBorrowingView
+        IndexBorrowingView borrowingView = new IndexBorrowingView();
 
         add(headerPanel, BorderLayout.NORTH);
-        add(contentPanel, BorderLayout.CENTER);
+        add(borrowingView, BorderLayout.CENTER);
     }
 
     private JButton createBackButton() {
@@ -107,6 +96,7 @@ public class TransaksiView extends JPanel {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(new Color(233, 236, 239));
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(new Color(248, 249, 250));
             }
