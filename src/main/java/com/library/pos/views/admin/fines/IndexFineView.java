@@ -21,6 +21,9 @@ public class IndexFineView extends JPanel {
     private JTable fineTable;
     private DefaultTableModel tableModel;
     private User currentUser;
+    private JTextField searchField;
+    private JComboBox<String> filterStatus;
+    private List<Fine> allFines;
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);
@@ -102,6 +105,58 @@ public class IndexFineView extends JPanel {
 
         topPanel.add(tableTitle, BorderLayout.WEST);
 
+        // Search and filter panel
+        JPanel searchFilterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        searchFilterPanel.setBackground(Color.WHITE);
+
+        searchField = new JTextField(15);
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
+        searchField.setText("Search member...");
+        searchField.setForeground(Color.GRAY);
+        searchField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (searchField.getText().equals("Search member...")) {
+                    searchField.setText("");
+                    searchField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (searchField.getText().isEmpty()) {
+                    searchField.setText("Search member...");
+                    searchField.setForeground(Color.GRAY);
+                }
+            }
+        });
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+        });
+
+        String[] statuses = { "Semua Status", "UNPAID", "PAID" };
+        filterStatus = new JComboBox<>(statuses);
+        filterStatus.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        filterStatus.setPreferredSize(new Dimension(120, 35));
+        filterStatus.addActionListener(e -> filterData());
+
+        searchFilterPanel.add(new JLabel("Status:"));
+        searchFilterPanel.add(filterStatus);
+        searchFilterPanel.add(searchField);
+
+        topPanel.add(searchFilterPanel, BorderLayout.EAST);
+
         // Table
         String[] columns = { "ID", "Anggota", "Jumlah Buku", "Hari Terlambat", "Total Denda", "Status", "Aksi" };
         tableModel = new DefaultTableModel(columns, 0) {
@@ -170,22 +225,38 @@ public class IndexFineView extends JPanel {
     }
 
     public void loadData() {
+        allFines = controller.getAllFines();
+        filterData();
+    }
+
+    private void filterData() {
         tableModel.setRowCount(0);
-        List<Fine> fines = controller.getAllFines();
+        String searchText = searchField.getText().toLowerCase();
+        if (searchText.equals("search member..."))
+            searchText = "";
+        String selectedStatus = (String) filterStatus.getSelectedItem();
 
-        for (Fine fine : fines) {
-            String statusDisplay = fine.isPaid() ? "✓ LUNAS" : "BELUM BAYAR";
+        for (Fine fine : allFines) {
+            boolean matchesSearch = searchText.isEmpty() ||
+                    (fine.getMemberName() != null && fine.getMemberName().toLowerCase().contains(searchText)) ||
+                    (fine.getMemberCode() != null && fine.getMemberCode().toLowerCase().contains(searchText));
 
-            Object[] row = {
-                    fine.getId(),
-                    fine.getMemberName() + " (" + fine.getMemberCode() + ")",
-                    fine.getTotalBooks(),
-                    fine.getDaysOverdue() + " hari",
-                    fine.getFormattedAmount(),
-                    statusDisplay,
-                    fine.getId() + "|" + fine.getPaymentStatus()
-            };
-            tableModel.addRow(row);
+            boolean matchesStatus = selectedStatus.equals("Semua Status") ||
+                    fine.getPaymentStatus().equals(selectedStatus);
+
+            if (matchesSearch && matchesStatus) {
+                String statusDisplay = fine.isPaid() ? "✓ LUNAS" : "BELUM BAYAR";
+                Object[] row = {
+                        fine.getId(),
+                        fine.getMemberName() + " (" + fine.getMemberCode() + ")",
+                        fine.getTotalBooks(),
+                        fine.getDaysOverdue() + " hari",
+                        fine.getFormattedAmount(),
+                        statusDisplay,
+                        fine.getId() + "|" + fine.getPaymentStatus()
+                };
+                tableModel.addRow(row);
+            }
         }
     }
 

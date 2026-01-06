@@ -20,6 +20,9 @@ public class IndexBorrowingView extends JPanel {
     private JTable borrowingTable;
     private DefaultTableModel tableModel;
     private JButton btnAdd;
+    private JTextField searchField;
+    private JComboBox<String> filterStatus;
+    private List<Borrowing> allBorrowings;
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);
@@ -100,7 +103,59 @@ public class IndexBorrowingView extends JPanel {
         btnAdd.addActionListener(e -> openCreateDialog());
 
         topPanel.add(tableTitle, BorderLayout.WEST);
-        topPanel.add(btnAdd, BorderLayout.EAST);
+
+        // Search and filter panel
+        JPanel searchFilterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        searchFilterPanel.setBackground(Color.WHITE);
+
+        searchField = new JTextField(15);
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
+        searchField.setText("Search member...");
+        searchField.setForeground(Color.GRAY);
+        searchField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (searchField.getText().equals("Search member...")) {
+                    searchField.setText("");
+                    searchField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (searchField.getText().isEmpty()) {
+                    searchField.setText("Search member...");
+                    searchField.setForeground(Color.GRAY);
+                }
+            }
+        });
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+        });
+
+        String[] statuses = { "Semua Status", "BORROWED", "RETURNED", "TERLAMBAT" };
+        filterStatus = new JComboBox<>(statuses);
+        filterStatus.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        filterStatus.setPreferredSize(new Dimension(130, 35));
+        filterStatus.addActionListener(e -> filterData());
+
+        searchFilterPanel.add(new JLabel("Status:"));
+        searchFilterPanel.add(filterStatus);
+        searchFilterPanel.add(searchField);
+        searchFilterPanel.add(btnAdd);
+
+        topPanel.add(searchFilterPanel, BorderLayout.EAST);
 
         // Table
         String[] columns = { "ID", "Anggota", "Petugas", "Tgl Pinjam", "Tgl Kembali", "Status", "Aksi" };
@@ -198,25 +253,44 @@ public class IndexBorrowingView extends JPanel {
     }
 
     public void loadData() {
+        allBorrowings = controller.getAllBorrowings();
+        filterData();
+    }
+
+    private void filterData() {
         tableModel.setRowCount(0);
-        List<Borrowing> borrowings = controller.getAllBorrowings();
+        String searchText = searchField.getText().toLowerCase();
+        if (searchText.equals("search member..."))
+            searchText = "";
+        String selectedStatus = (String) filterStatus.getSelectedItem();
 
-        for (Borrowing borrowing : borrowings) {
-            String statusDisplay = borrowing.getStatus();
-            if (borrowing.isOverdue()) {
-                statusDisplay = "⚠ TERLAMBAT";
+        for (Borrowing borrowing : allBorrowings) {
+            boolean matchesSearch = searchText.isEmpty() ||
+                    (borrowing.getMemberName() != null && borrowing.getMemberName().toLowerCase().contains(searchText))
+                    ||
+                    (borrowing.getMemberCode() != null && borrowing.getMemberCode().toLowerCase().contains(searchText));
+
+            boolean matchesStatus = selectedStatus.equals("Semua Status") ||
+                    (selectedStatus.equals("TERLAMBAT") && borrowing.isOverdue()) ||
+                    (!selectedStatus.equals("TERLAMBAT") && borrowing.getStatus().equals(selectedStatus));
+
+            if (matchesSearch && matchesStatus) {
+                String statusDisplay = borrowing.getStatus();
+                if (borrowing.isOverdue()) {
+                    statusDisplay = "⚠ TERLAMBAT";
+                }
+
+                Object[] row = {
+                        borrowing.getId(),
+                        borrowing.getMemberName() + " (" + borrowing.getMemberCode() + ")",
+                        borrowing.getUserName(),
+                        borrowing.getBorrowDate() != null ? borrowing.getBorrowDate().format(dateFormatter) : "-",
+                        borrowing.getDueDate() != null ? borrowing.getDueDate().format(dateFormatter) : "-",
+                        statusDisplay,
+                        borrowing.getId() + "|" + borrowing.isOverdue()
+                };
+                tableModel.addRow(row);
             }
-
-            Object[] row = {
-                    borrowing.getId(),
-                    borrowing.getMemberName() + " (" + borrowing.getMemberCode() + ")",
-                    borrowing.getUserName(),
-                    borrowing.getBorrowDate() != null ? borrowing.getBorrowDate().format(dateFormatter) : "-",
-                    borrowing.getDueDate() != null ? borrowing.getDueDate().format(dateFormatter) : "-",
-                    statusDisplay,
-                    borrowing.getId() + "|" + borrowing.isOverdue()
-            };
-            tableModel.addRow(row);
         }
     }
 
