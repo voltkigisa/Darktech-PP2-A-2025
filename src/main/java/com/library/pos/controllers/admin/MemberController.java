@@ -14,7 +14,7 @@ public class MemberController {
         try {
             List<Member> list = memberDAO.getAll();
             for (Member m : list) {
-                // Menyesuaikan dengan getter baru di model Member
+        
                 model.addRow(new Object[]{
                     m.getId(),
                     m.getMember_code(),
@@ -29,7 +29,6 @@ public class MemberController {
         }
     }
 
-    // Menambah parameter 'age' agar sesuai dengan database & model
     public boolean save(String member_code, String name, String age, String phone, String address) {
         try {
             memberDAO.insert(new Member(0, member_code, name, age, phone, address));
@@ -40,7 +39,6 @@ public class MemberController {
         }
     }
 
-    // Menambah parameter 'age' dan menyesuaikan constructor Member
     public boolean update(int id, String member_code, String name, String age, String phone, String address) {
         try {
             memberDAO.update(new Member(id, member_code, name, age, phone, address));
