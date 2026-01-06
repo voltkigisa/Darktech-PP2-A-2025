@@ -120,9 +120,9 @@ public class ManagerDashboardView extends JFrame {
 
         button.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this,
-                "Are you sure you want to logout?",
-                "Logout Confirmation",
-                JOptionPane.YES_NO_OPTION);
+                    "Are you sure you want to logout?",
+                    "Logout Confirmation",
+                    JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
                 dispose();
@@ -175,43 +175,45 @@ public class ManagerDashboardView extends JFrame {
 
         // Card 1 - View Books
         panel.add(createFeatureCard(
-            "View Books",
-            "View available books list",
-            new Color(0, 123, 255),
-            ""
-        ));
+                "View Books",
+                "View available books list",
+                new Color(0, 123, 255),
+                ""));
 
         // Card 2 - View Members
         panel.add(createFeatureCard(
-            "View Members",
-            "View library members data",
-            new Color(40, 167, 69),
-            ""
-        ));
+                "View Members",
+                "View library members data",
+                new Color(40, 167, 69),
+                ""));
 
         // Card 3 - Categories
         panel.add(createFeatureCard(
-            "Categories",
-            "Manage book categories",
-            new Color(108, 99, 255),
-            ""
-        ));
+                "Categories",
+                "Manage book categories",
+                new Color(108, 99, 255),
+                ""));
 
         // Card 4 - Transactions
         panel.add(createFeatureCard(
-            "Transactions",
-            "Book loans and returns",
-            new Color(255, 193, 7),
-            ""
-        ));
+                "Transactions",
+                "Book loans and returns",
+                new Color(255, 193, 7),
+                ""));
 
-        // Card 5 - Reports
+        // Card 5 - Fines
         panel.add(createFeatureCard(
-            "Reports",
-            "View transaction reports",
-            new Color(23, 162, 184),
-            ""
-        ));
+                "Fines",
+                "Manage overdue fines",
+                new Color(231, 76, 60),
+                ""));
+
+        // Card 6 - Reports
+        panel.add(createFeatureCard(
+                "Reports",
+                "View transaction reports",
+                new Color(23, 162, 184),
+                ""));
 
         return panel;
     }
@@ -232,8 +234,8 @@ public class ManagerDashboardView extends JFrame {
         card.setBackground(Color.WHITE);
         // Use 2px border from the start to prevent shifting on hover
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(222, 226, 230), 2),
-            new EmptyBorder(34, 29, 34, 29) // Adjust padding to compensate for 2px border
+                BorderFactory.createLineBorder(new Color(222, 226, 230), 2),
+                new EmptyBorder(34, 29, 34, 29) // Adjust padding to compensate for 2px border
         ));
 
         // Title
@@ -260,17 +262,15 @@ public class ManagerDashboardView extends JFrame {
             @Override
             public void mouseEntered(MouseEvent e) {
                 card.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(accentColor, 2),
-                    new EmptyBorder(34, 29, 34, 29)
-                ));
+                        BorderFactory.createLineBorder(accentColor, 2),
+                        new EmptyBorder(34, 29, 34, 29)));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 card.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(222, 226, 230), 2),
-                    new EmptyBorder(34, 29, 34, 29)
-                ));
+                        BorderFactory.createLineBorder(new Color(222, 226, 230), 2),
+                        new EmptyBorder(34, 29, 34, 29)));
             }
 
             @Override
@@ -296,14 +296,17 @@ public class ManagerDashboardView extends JFrame {
             case "Transactions":
                 showTransaksi();
                 break;
+            case "Fines":
+                showDenda();
+                break;
             case "Reports":
                 showLaporan();
                 break;
             default:
                 JOptionPane.showMessageDialog(this,
-                    "Feature " + cardTitle + " is under development",
-                    "Info",
-                    JOptionPane.INFORMATION_MESSAGE);
+                        "Feature " + cardTitle + " is under development",
+                        "Info",
+                        JOptionPane.INFORMATION_MESSAGE);
                 break;
         }
     }
@@ -333,9 +336,10 @@ public class ManagerDashboardView extends JFrame {
 
     private void showLihatBuku() {
         contentPanel.removeAll();
-        LihatBukuView lihatBukuView = new LihatBukuView(currentUser);
-        lihatBukuView.setOnBackCallback(() -> showDashboard());
-        contentPanel.add(lihatBukuView, BorderLayout.CENTER);
+
+        com.library.pos.views.manager.books.IndexBookView bookView = new com.library.pos.views.manager.books.IndexBookView();
+
+        contentPanel.add(bookView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
@@ -351,78 +355,10 @@ public class ManagerDashboardView extends JFrame {
 
     private void showCategories() {
         contentPanel.removeAll();
-        
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(248, 249, 250));
 
-        // Header Panel
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(Color.WHITE);
-        headerPanel.setBorder(new EmptyBorder(25, 30, 25, 30));
+        com.library.pos.views.manager.categories.IndexCategoryView categoryView = new com.library.pos.views.manager.categories.IndexCategoryView();
 
-        JLabel titleLabel = new JLabel("Categories");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titleLabel.setForeground(new Color(33, 37, 41));
-
-        JButton backButton = new JButton("← Kembali") {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(getBackground());
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-                g2.setColor(getForeground());
-                FontMetrics fm = g2.getFontMetrics();
-                String text = getText();
-                int x = (getWidth() - fm.stringWidth(text)) / 2;
-                int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
-                g2.drawString(text, x, y);
-                g2.dispose();
-            }
-        };
-        backButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        backButton.setForeground(Color.WHITE);
-        backButton.setBackground(new Color(108, 117, 125));
-        backButton.setFocusPainted(false);
-        backButton.setBorderPainted(false);
-        backButton.setContentAreaFilled(false);
-        backButton.setPreferredSize(new Dimension(120, 38));
-        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        backButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                backButton.setBackground(new Color(90, 98, 104));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                backButton.setBackground(new Color(108, 117, 125));
-            }
-        });
-        
-        backButton.addActionListener(e -> showDashboard());
-
-        headerPanel.add(titleLabel, BorderLayout.WEST);
-        headerPanel.add(backButton, BorderLayout.EAST);
-
-        // Content Panel
-        JPanel contentPanelInner = new JPanel();
-        contentPanelInner.setLayout(new BoxLayout(contentPanelInner, BoxLayout.Y_AXIS));
-        contentPanelInner.setBackground(Color.WHITE);
-        contentPanelInner.setBorder(new EmptyBorder(100, 50, 100, 50));
-
-        JLabel messageLabel = new JLabel("Category management feature is under development");
-        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        messageLabel.setForeground(new Color(107, 114, 128));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        contentPanelInner.add(messageLabel);
-
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
-        mainPanel.add(contentPanelInner, BorderLayout.CENTER);
-
-        contentPanel.add(mainPanel, BorderLayout.CENTER);
+        contentPanel.add(categoryView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
@@ -432,6 +368,15 @@ public class ManagerDashboardView extends JFrame {
         TransaksiView transaksiView = new TransaksiView(currentUser);
         transaksiView.setOnBackCallback(() -> showDashboard());
         contentPanel.add(transaksiView, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    private void showDenda() {
+        contentPanel.removeAll();
+        com.library.pos.views.manager.fines.IndexFineView fineView = new com.library.pos.views.manager.fines.IndexFineView(
+                currentUser);
+        contentPanel.add(fineView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
@@ -453,4 +398,3 @@ public class ManagerDashboardView extends JFrame {
         });
     }
 }
-

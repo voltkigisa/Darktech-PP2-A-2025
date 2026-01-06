@@ -96,6 +96,23 @@ CREATE TABLE IF NOT EXISTS returns (
     FOREIGN KEY (borrowing_id) REFERENCES borrowings (id)
 );
 
+-- Fines table for detailed fine management
+CREATE TABLE IF NOT EXISTS fines (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    borrowing_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    days_overdue INT NOT NULL,
+    total_books INT NOT NULL,
+    fine_per_day DECIMAL(10, 2) DEFAULT 1000,
+    payment_status ENUM('UNPAID', 'PAID') DEFAULT 'UNPAID',
+    payment_method ENUM('CASH', 'DIGITAL') NULL,
+    paid_at TIMESTAMP NULL,
+    paid_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (borrowing_id) REFERENCES borrowings (id),
+    FOREIGN KEY (paid_by) REFERENCES users (id)
+);
+
 -- Insert sample users
 INSERT INTO
     users (
