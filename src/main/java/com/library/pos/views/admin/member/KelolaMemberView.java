@@ -37,7 +37,7 @@ public class KelolaMemberView extends JPanel {
         formPanel.setBackground(Color.WHITE);
         formPanel.setPreferredSize(new Dimension(300, 0));
 
-        txtmember_code = new JTextField();
+        txtMemberCode = new JTextField();
         txtName = new JTextField();
         txtAge = new JTextField();
         txtPhone = new JTextField();
@@ -45,7 +45,7 @@ public class KelolaMemberView extends JPanel {
 
         // Input Fields
         formPanel.add(new JLabel("Member Code:"));
-        formPanel.add(txtmember_code);
+        formPanel.add(txtMemberCode);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         formPanel.add(new JLabel("Full Name:"));
@@ -127,14 +127,9 @@ public class KelolaMemberView extends JPanel {
         add(tablePanel, BorderLayout.CENTER);
         setupTableStyle();
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(null);
-        tableContainer.add(scrollPane, BorderLayout.CENTER);
-        add(tableContainer, BorderLayout.CENTER);
-
         // --- LOGIKA EVENT ---
         btnSave.addActionListener(e -> {
-            if (controller.save(txtmember_code.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(),
+            if (controller.save(txtMemberCode.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(),
                     txtAddress.getText())) {
                 JOptionPane.showMessageDialog(this, "Success: Member saved!");
                 refreshTable();
@@ -156,7 +151,7 @@ public class KelolaMemberView extends JPanel {
 
         btnUpdate.addActionListener(e -> {
             if (selectedId != -1) {
-                if (controller.update(selectedId, txtmember_code.getText(), txtName.getText(), txtAge.getText(),
+                if (controller.update(selectedId, txtMemberCode.getText(), txtName.getText(), txtAge.getText(),
                         txtPhone.getText(), txtAddress.getText())) {
                     JOptionPane.showMessageDialog(this, "Success: Data updated!");
                     refreshTable();
@@ -242,5 +237,24 @@ public class KelolaMemberView extends JPanel {
         txtAddress.setText("");
         selectedId = -1;
         table.clearSelection();
+    }
+
+    private void refreshTable() {
+        controller.loadDataToTable(tableModel);
+    }
+
+    private void setupTableStyle() {
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        table.setRowHeight(35);
+        table.setShowGrid(false);
+        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setSelectionBackground(new Color(99, 102, 241, 30));
+        table.setSelectionForeground(TEXT_COLOR);
+        
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
     }
 }
