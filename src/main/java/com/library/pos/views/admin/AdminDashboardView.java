@@ -82,6 +82,7 @@ public class AdminDashboardView extends JFrame {
         JButton btnBuku = createMenuButton("", "Manage Books", false);
         JButton btnAnggota = createMenuButton("", "Manage Members", false);
         JButton btnTransaksi = createMenuButton("", "Transactions", false);
+        JButton btnDenda = createMenuButton("", "Fines", false);
         JButton btnLaporan = createMenuButton("", "Reports", false);
 
         menuPanel.add(btnDashboard);
@@ -95,6 +96,8 @@ public class AdminDashboardView extends JFrame {
         menuPanel.add(btnAnggota);
         menuPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         menuPanel.add(btnTransaksi);
+        menuPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        menuPanel.add(btnDenda);
         menuPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         menuPanel.add(btnLaporan);
 
@@ -211,6 +214,9 @@ public class AdminDashboardView extends JFrame {
                     break;
                 case "Transactions":
                     showTransaksiContent();
+                    break;
+                case "Fines":
+                    showFinesContent();
                     break;
                 case "Reports":
                     showLaporanContent();
@@ -442,6 +448,18 @@ public class AdminDashboardView extends JFrame {
         com.library.pos.views.admin.categories.IndexCategoryView categoryPanel = new com.library.pos.views.admin.categories.IndexCategoryView();
 
         contentPanel.add(categoryPanel, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    private void showFinesContent() {
+        contentPanel.removeAll();
+
+        // Embed the admin fines management panel
+        com.library.pos.views.admin.fines.IndexFineView fineView = new com.library.pos.views.admin.fines.IndexFineView(
+                currentUser);
+
+        contentPanel.add(fineView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
