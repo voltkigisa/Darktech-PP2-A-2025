@@ -34,7 +34,6 @@ public class AdminDashboardView extends JFrame {
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(new Color(245, 247, 250));
 
-
         JPanel header = createHeader();
         rightPanel.add(header, BorderLayout.NORTH);
 
@@ -238,9 +237,9 @@ public class AdminDashboardView extends JFrame {
         JButton logoutButton = createStyledButton("Logout", new Color(239, 68, 68));
         logoutButton.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this,
-                "Are you sure you want to logout?",
-                "Logout Confirmation",
-                JOptionPane.YES_NO_OPTION);
+                    "Are you sure you want to logout?",
+                    "Logout Confirmation",
+                    JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
                 dispose();
@@ -291,6 +290,7 @@ public class AdminDashboardView extends JFrame {
             public void mouseEntered(MouseEvent evt) {
                 button.setBackground(hoverColor);
             }
+
             public void mouseExited(MouseEvent evt) {
                 button.setBackground(bgColor);
             }
@@ -356,9 +356,8 @@ public class AdminDashboardView extends JFrame {
         card.setLayout(new BorderLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(229, 231, 235), 1),
-            new EmptyBorder(30, 25, 30, 25)
-        ));
+                BorderFactory.createLineBorder(new Color(229, 231, 235), 1),
+                new EmptyBorder(30, 25, 30, 25)));
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.WHITE);
@@ -397,8 +396,7 @@ public class AdminDashboardView extends JFrame {
         contentPanel.removeAll();
 
         // Directly embed the user management panel
-        com.library.pos.views.admin.users.IndexUserView userPanel = 
-            new com.library.pos.views.admin.users.IndexUserView();
+        com.library.pos.views.admin.users.IndexUserView userPanel = new com.library.pos.views.admin.users.IndexUserView();
 
         contentPanel.add(userPanel, BorderLayout.CENTER);
         contentPanel.revalidate();
@@ -408,8 +406,7 @@ public class AdminDashboardView extends JFrame {
     private void showKelolaBukuContent() {
         contentPanel.removeAll();
 
-        com.library.pos.views.admin.books.IndexBookView bookView = 
-            new com.library.pos.views.admin.books.IndexBookView();
+        com.library.pos.views.admin.books.IndexBookView bookView = new com.library.pos.views.admin.books.IndexBookView();
 
         contentPanel.add(bookView, BorderLayout.CENTER);
         contentPanel.revalidate();
@@ -417,41 +414,24 @@ public class AdminDashboardView extends JFrame {
     }
 
     private void showKelolaAnggotaContent() {
-    contentPanel.removeAll(); // Hapus tulisan "sedang dalam pengembangan"
+        contentPanel.removeAll(); // Hapus tulisan "sedang dalam pengembangan"
 
-    // Panggil tampilan KelolaMemberView yang sudah kita perbaiki tadi
-    com.library.pos.views.admin.member.KelolaMemberView memberView = 
-        new com.library.pos.views.admin.member.KelolaMemberView();
+        // Panggil tampilan KelolaMemberView yang sudah kita perbaiki tadi
+        com.library.pos.views.admin.member.KelolaMemberView memberView = new com.library.pos.views.admin.member.KelolaMemberView();
 
-    contentPanel.add(memberView, BorderLayout.CENTER); // Masukkan form & tabel ke dashboard
-    
-    contentPanel.revalidate();
-    contentPanel.repaint();
-}
+        contentPanel.add(memberView, BorderLayout.CENTER); // Masukkan form & tabel ke dashboard
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
 
     private void showTransaksiContent() {
         contentPanel.removeAll();
 
-        JPanel transaksiPanel = new JPanel();
-        transaksiPanel.setLayout(new BoxLayout(transaksiPanel, BoxLayout.Y_AXIS));
-        transaksiPanel.setBackground(Color.WHITE);
-        transaksiPanel.setBorder(new EmptyBorder(100, 50, 100, 50));
+        // Embed the borrowing management panel
+        com.library.pos.views.manager.borrowings.IndexBorrowingView borrowingView = new com.library.pos.views.manager.borrowings.IndexBorrowingView();
 
-        JLabel titleLabel = new JLabel("Transactions");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        titleLabel.setForeground(new Color(31, 41, 55));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel messageLabel = new JLabel("Loan transaction feature is under development");
-        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        messageLabel.setForeground(new Color(107, 114, 128));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        transaksiPanel.add(titleLabel);
-        transaksiPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        transaksiPanel.add(messageLabel);
-
-        contentPanel.add(transaksiPanel, BorderLayout.CENTER);
+        contentPanel.add(borrowingView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
@@ -459,8 +439,7 @@ public class AdminDashboardView extends JFrame {
     private void showCategoriesContent() {
         contentPanel.removeAll();
 
-        com.library.pos.views.admin.categories.IndexCategoryView categoryPanel = 
-            new com.library.pos.views.admin.categories.IndexCategoryView();
+        com.library.pos.views.admin.categories.IndexCategoryView categoryPanel = new com.library.pos.views.admin.categories.IndexCategoryView();
 
         contentPanel.add(categoryPanel, BorderLayout.CENTER);
         contentPanel.revalidate();
@@ -529,4 +508,3 @@ public class AdminDashboardView extends JFrame {
         });
     }
 }
-
