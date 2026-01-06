@@ -32,70 +32,99 @@ public class KelolaMemberView extends JPanel {
 
     private void initComponents() {
         // --- PANEL FORM (KIRI) ---
-        JPanel cardPanel = new JPanel();
-        cardPanel.setLayout(new BorderLayout());
-        cardPanel.setBackground(BG_COLOR);
-        cardPanel.setPreferredSize(new Dimension(350, 0));
-        cardPanel.setBorder(new LineBorder(new Color(229, 231, 235), 1));
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBackground(Color.WHITE);
+        formPanel.setPreferredSize(new Dimension(300, 0));
 
-        JPanel formContent = new JPanel();
-        formContent.setLayout(new BoxLayout(formContent, BoxLayout.Y_AXIS));
-        formContent.setBackground(BG_COLOR);
-        formContent.setBorder(new EmptyBorder(25, 25, 25, 25));
+        txtmember_code = new JTextField();
+        txtName = new JTextField();
+        txtAge = new JTextField();
+        txtPhone = new JTextField();
+        txtAddress = new JTextField();
 
-        // Judul Form
-        JLabel formTitle = new JLabel("Member Information");
-        formTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        formTitle.setForeground(TEXT_COLOR);
-        formTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
-        formContent.add(formTitle);
-        formContent.add(Box.createRigidArea(new Dimension(0, 20)));
+        // Input Fields
+        formPanel.add(new JLabel("Member Code:"));
+        formPanel.add(txtmember_code);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        // Inisialisasi Input dengan Style Modern
-        txtMemberCode = createStyledTextField();
-        txtName = createStyledTextField();
-        txtAge = createStyledTextField();
-        txtPhone = createStyledTextField();
-        txtAddress = createStyledTextField();
+        formPanel.add(new JLabel("Full Name:"));
+        formPanel.add(txtName);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        addLabeledInput(formContent, "Member Code", txtMemberCode);
-        addLabeledInput(formContent, "Full Name", txtName);
-        addLabeledInput(formContent, "Age", txtAge);
-        addLabeledInput(formContent, "Phone Number", txtPhone);
-        addLabeledInput(formContent, "Address", txtAddress);
+        formPanel.add(new JLabel("Age:"));
+        formPanel.add(txtAge);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        formContent.add(Box.createRigidArea(new Dimension(0, 10)));
+        formPanel.add(new JLabel("Phone Number:"));
+        formPanel.add(txtPhone);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        // Tombol-tombol Action
-        JButton btnSave = createModernButton("Save Member", PRIMARY_COLOR);
-        JButton btnUpdate = createModernButton("Update", new Color(16, 185, 129)); // Green
-        JButton btnDelete = createModernButton("Delete", DANGER_COLOR);
-        JButton btnClear = createModernButton("Clear Form", new Color(107, 114, 128)); // Gray
+        formPanel.add(new JLabel("Address:"));
+        formPanel.add(txtAddress);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        JPanel actionPanel = new JPanel(new GridLayout(2, 2, 10, 10));
-        actionPanel.setBackground(BG_COLOR);
-        actionPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
-        actionPanel.add(btnSave);
-        actionPanel.add(btnUpdate);
-        actionPanel.add(btnDelete);
-        actionPanel.add(btnClear);
+        // Tombol CRUD
+        JButton btnSave = new JButton("Save Member");
+        JButton btnUpdate = new JButton("Update");
+        JButton btnDelete = new JButton("Delete");
+        JButton btnClear = new JButton("Clear");
 
-        formContent.add(actionPanel);
-        cardPanel.add(formContent, BorderLayout.NORTH);
-        add(cardPanel, BorderLayout.WEST);
+        JPanel btnGrid = new JPanel(new GridLayout(2, 2, 5, 5));
+        btnGrid.setBackground(Color.WHITE);
+        btnGrid.add(btnSave);
+        btnGrid.add(btnUpdate);
+        btnGrid.add(btnDelete);
+        btnGrid.add(btnClear);
+        formPanel.add(btnGrid);
+
+        add(formPanel, BorderLayout.WEST);
 
         // --- PANEL TABEL (TENGAH) ---
-        JPanel tableContainer = new JPanel(new BorderLayout());
-        tableContainer.setBackground(BG_COLOR);
-        tableContainer.setBorder(new LineBorder(new Color(229, 231, 235), 1));
+        JPanel tablePanel = new JPanel(new BorderLayout(0, 10));
+        tablePanel.setBackground(Color.WHITE);
 
-        String[] columns = {"ID", "Code", "Name", "Age", "Phone", "Address"};
+        // Search field
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        searchPanel.setBackground(Color.WHITE);
+        JTextField searchField = new JTextField(20);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
+        searchField.setToolTipText("Cari berdasarkan nama atau kode member");
+        JLabel lblSearch = new JLabel("Search: ");
+        searchPanel.add(lblSearch);
+        searchPanel.add(searchField);
+
+        // Menambah kolom "Age" pada tabel
+        String[] columns = { "ID", "member_code", "Name", "Age", "Phone", "Address" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) { return false; }
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
 
         table = new JTable(tableModel);
+
+        // Search listener
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filterTable(searchField.getText());
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filterTable(searchField.getText());
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filterTable(searchField.getText());
+            }
+        });
+
+        tablePanel.add(searchPanel, BorderLayout.NORTH);
+        tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
+        add(tablePanel, BorderLayout.CENTER);
         setupTableStyle();
 
         JScrollPane scrollPane = new JScrollPane(table);
@@ -105,8 +134,9 @@ public class KelolaMemberView extends JPanel {
 
         // --- LOGIKA EVENT ---
         btnSave.addActionListener(e -> {
-            if (controller.save(txtMemberCode.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(), txtAddress.getText())) {
-                JOptionPane.showMessageDialog(this, "Success: Member registered!");
+            if (controller.save(txtmember_code.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(),
+                    txtAddress.getText())) {
+                JOptionPane.showMessageDialog(this, "Success: Member saved!");
                 refreshTable();
                 clearForm();
             }
@@ -126,8 +156,9 @@ public class KelolaMemberView extends JPanel {
 
         btnUpdate.addActionListener(e -> {
             if (selectedId != -1) {
-                if (controller.update(selectedId, txtMemberCode.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(), txtAddress.getText())) {
-                    JOptionPane.showMessageDialog(this, "Success: Member updated!");
+                if (controller.update(selectedId, txtmember_code.getText(), txtName.getText(), txtAge.getText(),
+                        txtPhone.getText(), txtAddress.getText())) {
+                    JOptionPane.showMessageDialog(this, "Success: Data updated!");
                     refreshTable();
                     clearForm();
                 }
@@ -138,7 +169,8 @@ public class KelolaMemberView extends JPanel {
 
         btnDelete.addActionListener(e -> {
             if (selectedId != -1) {
-                int confirm = JOptionPane.showConfirmDialog(this, "Delete this member permanently?", "Warning", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(this, "Delete this member?", "Confirmation",
+                        JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     if (controller.delete(selectedId)) {
                         refreshTable();
@@ -186,30 +218,21 @@ public class KelolaMemberView extends JPanel {
         return btn;
     }
 
-    private void setupTableStyle() {
-        table.setRowHeight(40);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        table.setSelectionBackground(new Color(238, 242, 255));
-        table.setSelectionForeground(PRIMARY_COLOR);
-        table.setGridColor(new Color(243, 244, 246));
-        table.setIntercellSpacing(new Dimension(0, 0));
-        table.setShowVerticalLines(false);
+    private void filterTable(String searchText) {
+        searchText = searchText.toLowerCase().trim();
+        // Reload full data first
+        controller.loadDataToTable(tableModel);
 
-        // Header Style
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table.getTableHeader().setBackground(new Color(249, 250, 251));
-        table.getTableHeader().setForeground(new Color(107, 114, 128));
-        table.getTableHeader().setPreferredSize(new Dimension(0, 45));
-        table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(229, 231, 235)));
-
-        // Center Align Kolom ID & Age
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        if (!searchText.isEmpty()) {
+            for (int i = tableModel.getRowCount() - 1; i >= 0; i--) {
+                String memberCode = tableModel.getValueAt(i, 1).toString().toLowerCase();
+                String name = tableModel.getValueAt(i, 2).toString().toLowerCase();
+                if (!memberCode.contains(searchText) && !name.contains(searchText)) {
+                    tableModel.removeRow(i);
+                }
+            }
+        }
     }
-
-    private void refreshTable() { controller.loadDataToTable(tableModel); }
 
     private void clearForm() {
         txtMemberCode.setText("");
