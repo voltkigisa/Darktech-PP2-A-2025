@@ -1,0 +1,321 @@
+package com.library.pos.views.manager.fines;
+
+import com.library.pos.controllers.FineController;
+import com.library.pos.models.Fine;
+import com.library.pos.models.User;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+
+/**
+ * IndexFineView - Manager fine list view (view + pay only, no edit/delete)
+ */
+public class IndexFineView extends JPanel {
+    private FineController controller;
+    private JTable fineTable;
+    private DefaultTableModel tableModel;
+    private User currentUser;
+
+    private final Color PRIMARY_COLOR = new Color(41, 128, 185);
+    private final Color SUCCESS_COLOR = new Color(39, 174, 96);
+    private final Color DANGER_COLOR = new Color(231, 76, 60);
+    private final Color WARNING_COLOR = new Color(243, 156, 18);
+    private final Color DARK_COLOR = new Color(44, 62, 80);
+    private final Color LIGHT_BG = new Color(236, 240, 241);
+
+    public IndexFineView() {
+        this(null);
+    }
+
+    public IndexFineView(User currentUser) {
+        this.controller = new FineController();
+        this.currentUser = currentUser != null ? currentUser : new User(1, "admin", "", "Admin", "ADMIN");
+        initComponents();
+        loadData();
+    }
+
+    private void initComponents() {
+        setLayout(new BorderLayout(0, 0));
+        setBackground(LIGHT_BG);
+
+        add(createHeaderPanel(), BorderLayout.NORTH);
+
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        mainPanel.add(createTablePanel(), BorderLayout.CENTER);
+
+        add(mainPanel, BorderLayout.CENTER);
+    }
+
+    private JPanel createHeaderPanel() {
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setPreferredSize(new Dimension(0, 90));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+        titlePanel.setBackground(Color.WHITE);
+
+        JLabel lblTitle = new JLabel("MANAJEMEN DENDA");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 32));
+        lblTitle.setForeground(DARK_COLOR);
+
+        JLabel lblSubtitle = new JLabel("Kelola Denda Keterlambatan Pengembalian");
+        lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        lblSubtitle.setForeground(new Color(107, 114, 128));
+
+        titlePanel.add(lblTitle);
+        titlePanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        titlePanel.add(lblSubtitle);
+
+        headerPanel.add(titlePanel, BorderLayout.WEST);
+
+        return headerPanel;
+    }
+
+    private JPanel createTablePanel() {
+        JPanel mainPanel = new JPanel(new BorderLayout(0, 15));
+        mainPanel.setBackground(LIGHT_BG);
+
+        JPanel tableContainer = new JPanel(new BorderLayout());
+        tableContainer.setBackground(Color.WHITE);
+        tableContainer.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(25, 25, 25, 25)));
+
+        // Top panel with title
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(Color.WHITE);
+        topPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+
+        JLabel tableTitle = new JLabel("DAFTAR DENDA");
+        tableTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        tableTitle.setForeground(DARK_COLOR);
+
+        topPanel.add(tableTitle, BorderLayout.WEST);
+
+        // Table
+        String[] columns = { "ID", "Anggota", "Jumlah Buku", "Hari Terlambat", "Total Denda", "Status", "Aksi" };
+        tableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 6;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 6 ? JPanel.class : Object.class;
+            }
+        };
+
+        fineTable = new JTable(tableModel);
+        fineTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        fineTable.setForeground(Color.BLACK);
+        fineTable.setRowHeight(55);
+        fineTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        fineTable.setShowVerticalLines(true);
+        fineTable.setGridColor(new Color(220, 220, 220));
+
+        fineTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        fineTable.getTableHeader().setBackground(DARK_COLOR);
+        fineTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
+        fineTable.getTableHeader().setReorderingAllowed(false);
+
+        // Set column widths
+        fineTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        fineTable.getColumnModel().getColumn(1).setPreferredWidth(180);
+        fineTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        fineTable.getColumnModel().getColumn(3).setPreferredWidth(120);
+        fineTable.getColumnModel().getColumn(4).setPreferredWidth(120);
+        fineTable.getColumnModel().getColumn(5).setPreferredWidth(100);
+        fineTable.getColumnModel().getColumn(6).setPreferredWidth(100);
+
+        // Custom renderer for status highlighting
+        fineTable.setDefaultRenderer(Object.class, new StatusRowRenderer());
+
+        // Action column
+        fineTable.getColumnModel().getColumn(6).setCellRenderer(new ActionButtonRenderer());
+        fineTable.getColumnModel().getColumn(6).setCellEditor(new ActionButtonEditor(new JCheckBox()));
+
+        JScrollPane scrollPane = new JScrollPane(fineTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(189, 195, 199), 1));
+        scrollPane.getViewport().setBackground(Color.WHITE);
+
+        tableContainer.add(topPanel, BorderLayout.NORTH);
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
+
+        mainPanel.add(tableContainer, BorderLayout.CENTER);
+
+        return mainPanel;
+    }
+
+    private JButton createSmallButton(String text, Color bgColor) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        button.setForeground(Color.WHITE);
+        button.setBackground(bgColor);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setPreferredSize(new Dimension(75, 32));
+        return button;
+    }
+
+    public void loadData() {
+        tableModel.setRowCount(0);
+        List<Fine> fines = controller.getAllFines();
+
+        for (Fine fine : fines) {
+            String statusDisplay = fine.isPaid() ? "✓ LUNAS" : "BELUM BAYAR";
+
+            Object[] row = {
+                    fine.getId(),
+                    fine.getMemberName() + " (" + fine.getMemberCode() + ")",
+                    fine.getTotalBooks(),
+                    fine.getDaysOverdue() + " hari",
+                    fine.getFormattedAmount(),
+                    statusDisplay,
+                    fine.getId() + "|" + fine.getPaymentStatus()
+            };
+            tableModel.addRow(row);
+        }
+    }
+
+    private void openPayDialog(int fineId) {
+        Window window = SwingUtilities.getWindowAncestor(this);
+        PayFineDialog payDialog = new PayFineDialog(window, fineId, currentUser, this);
+        payDialog.setVisible(true);
+    }
+
+    /**
+     * Custom renderer to highlight paid/unpaid status
+     */
+    class StatusRowRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            setHorizontalAlignment(SwingConstants.CENTER);
+
+            // Check if this row is unpaid
+            Object actionValue = table.getValueAt(row, 6);
+            boolean isUnpaid = actionValue != null && actionValue.toString().contains("|UNPAID");
+
+            if (!isSelected) {
+                if (isUnpaid) {
+                    c.setBackground(new Color(255, 250, 230));
+                    if (column == 5) {
+                        c.setForeground(WARNING_COLOR);
+                        setFont(new Font("Segoe UI", Font.BOLD, 13));
+                    } else {
+                        c.setForeground(Color.BLACK);
+                        setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                    }
+                } else {
+                    c.setBackground(new Color(235, 255, 240));
+                    if (column == 5) {
+                        c.setForeground(SUCCESS_COLOR);
+                        setFont(new Font("Segoe UI", Font.BOLD, 13));
+                    } else {
+                        c.setForeground(Color.BLACK);
+                        setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                    }
+                }
+            }
+
+            return c;
+        }
+    }
+
+    class ActionButtonRenderer extends JPanel implements javax.swing.table.TableCellRenderer {
+        private JButton btnPay;
+        private JLabel lblPaid;
+
+        public ActionButtonRenderer() {
+            setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
+            setBackground(Color.WHITE);
+
+            btnPay = createSmallButton("Bayar", SUCCESS_COLOR);
+            lblPaid = new JLabel("Lunas");
+            lblPaid.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+            lblPaid.setForeground(new Color(127, 140, 141));
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            removeAll();
+
+            boolean isUnpaid = value != null && value.toString().contains("|UNPAID");
+
+            if (isUnpaid) {
+                add(btnPay);
+                setBackground(new Color(255, 250, 230));
+            } else {
+                add(lblPaid);
+                setBackground(new Color(235, 255, 240));
+            }
+
+            return this;
+        }
+    }
+
+    class ActionButtonEditor extends DefaultCellEditor {
+        private JPanel panel;
+        private JButton btnPay;
+        private JLabel lblPaid;
+        private int fineId;
+        private boolean isUnpaid;
+
+        public ActionButtonEditor(JCheckBox checkBox) {
+            super(checkBox);
+
+            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
+            panel.setBackground(Color.WHITE);
+
+            btnPay = createSmallButton("Bayar", SUCCESS_COLOR);
+            btnPay.addActionListener(e -> {
+                fireEditingStopped();
+                openPayDialog(fineId);
+            });
+
+            lblPaid = new JLabel("Lunas");
+            lblPaid.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+            lblPaid.setForeground(new Color(127, 140, 141));
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value,
+                boolean isSelected, int row, int column) {
+            panel.removeAll();
+
+            if (value != null) {
+                String[] parts = value.toString().split("\\|");
+                this.fineId = Integer.parseInt(parts[0]);
+                this.isUnpaid = parts.length > 1 && parts[1].equals("UNPAID");
+            }
+
+            if (isUnpaid) {
+                panel.add(btnPay);
+                panel.setBackground(new Color(255, 250, 230));
+            } else {
+                panel.add(lblPaid);
+                panel.setBackground(new Color(235, 255, 240));
+            }
+
+            return panel;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return fineId;
+        }
+    }
+}
