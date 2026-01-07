@@ -20,6 +20,8 @@ public class IndexCategoryView extends JPanel {
     private DefaultTableModel tableModel;
     private JButton btnAdd;
     private Runnable onBackCallback;
+    private JTextField searchField;
+    private List<Category> allCategories;
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);

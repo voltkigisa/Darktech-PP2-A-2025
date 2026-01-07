@@ -21,6 +21,9 @@ public class IndexFineView extends JPanel {
     private DefaultTableModel tableModel;
     private User currentUser;
     private Runnable onBackCallback;
+    private JTextField searchField;
+    private JComboBox<String> filterStatus;
+    private List<Fine> allFines;
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);

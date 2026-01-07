@@ -3,6 +3,7 @@ package com.library.pos.views.admin.member;
 import com.library.pos.controllers.admin.MemberController;
 import com.library.pos.views.admin.AdminDashboardView;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -21,6 +22,7 @@ public class KelolaMemberView extends JPanel {
     private JTextField txtMemberCode, txtName, txtAge, txtPhone, txtAddress;
     private int selectedId = -1;
     private AdminDashboardView dashboard; // Reference to dashboard for refresh
+    private JButton btnAdd;
 
     // Palette Warna
     private final Color PRIMARY_COLOR = new Color(59, 130, 246);   // Blue
@@ -28,6 +30,7 @@ public class KelolaMemberView extends JPanel {
     private final Color DANGER_COLOR = new Color(239, 68, 68);    // Red
     private final Color DARK_COLOR = new Color(31, 41, 55);
     private final Color LIGHT_BG = new Color(249, 250, 251);
+    private final Color TEXT_COLOR = new Color(0, 0, 0);  // Black text
 
     // Constructor without dashboard (for backward compatibility)
     public KelolaMemberView() {
@@ -132,66 +135,26 @@ public class KelolaMemberView extends JPanel {
         tableContainer.add(scrollPane, BorderLayout.CENTER);
 
         mainPanel.add(tableContainer, BorderLayout.CENTER);
+        
+        // Setup Action Column
+        table.getColumnModel().getColumn(6).setCellRenderer(new ActionButtonRenderer());
+        table.getColumnModel().getColumn(6).setCellEditor(new ActionButtonEditor(new JCheckBox()));
+        
+        setupTableStyle();
+        
         return mainPanel;
     }
-
-        tablePanel.add(searchPanel, BorderLayout.NORTH);
-        tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
-        add(tablePanel, BorderLayout.CENTER);
-        setupTableStyle();
-
-        // --- LOGIKA EVENT ---
-        btnSave.addActionListener(e -> {
-            if (controller.save(txtMemberCode.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(),
-                    txtAddress.getText())) {
-                JOptionPane.showMessageDialog(this, "Success: Member saved!");
-                refreshTable();
-                clearForm();
-                // Refresh dashboard statistics if available
-                if (dashboard != null) {
-                    dashboard.refreshDashboardStats();
-                }
-            }
-        };
-
-        // Terapkan Renderer ke Kolom 0-5
-        for (int i = 0; i < 6; i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(blackTextRenderer);
-        }
-
-        btnUpdate.addActionListener(e -> {
-            if (selectedId != -1) {
-                if (controller.update(selectedId, txtMemberCode.getText(), txtName.getText(), txtAge.getText(),
-                        txtPhone.getText(), txtAddress.getText())) {
-                    JOptionPane.showMessageDialog(this, "Success: Data updated!");
-                    refreshTable();
-                    clearForm();
-                    // Refresh dashboard statistics if available
-                    if (dashboard != null) {
-                        dashboard.refreshDashboardStats();
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Please select a member from the table.");
-            }
-        });
-
-        btnDelete.addActionListener(e -> {
-            if (selectedId != -1) {
-                int confirm = JOptionPane.showConfirmDialog(this, "Delete this member?", "Confirmation",
-                        JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) {
-                    if (controller.delete(selectedId)) {
-                        refreshTable();
-                        clearForm();
-                        // Refresh dashboard statistics if available
-                        if (dashboard != null) {
-                            dashboard.refreshDashboardStats();
-                        }
-                    }
-                }
-            }
-        });
+    
+    private JButton createButton(String text, Color bgColor) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        button.setForeground(Color.WHITE);
+        button.setBackground(bgColor);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setOpaque(true);
+        button.setPreferredSize(new Dimension(150, 40));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
 

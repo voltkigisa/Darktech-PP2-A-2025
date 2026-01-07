@@ -20,6 +20,9 @@ public class IndexBookView extends JPanel {
     private DefaultTableModel tableModel;
     private JButton btnAdd;
     private Runnable onBackCallback;
+    private JTextField searchField;
+    private JComboBox<String> filterGenre;
+    private List<Book> allBooks;
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);
