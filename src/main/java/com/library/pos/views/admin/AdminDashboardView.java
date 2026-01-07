@@ -265,6 +265,18 @@ public class AdminDashboardView extends JFrame {
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setForeground(new Color(31, 41, 55));
 
+        // Button panel for Export PDF and Logout
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttonPanel.setBackground(Color.WHITE);
+
+        // Export PDF button
+        JButton exportButton = createStyledButton("📄 Export PDF", new Color(16, 185, 129));
+        exportButton.addActionListener(e -> {
+            com.library.pos.controllers.ReportController reportController =
+                new com.library.pos.controllers.ReportController();
+            reportController.exportToPDF(this, currentUser);
+        });
+
         JButton logoutButton = createStyledButton("Logout", new Color(239, 68, 68));
         logoutButton.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this,
@@ -281,8 +293,11 @@ public class AdminDashboardView extends JFrame {
             }
         });
 
+        buttonPanel.add(exportButton);
+        buttonPanel.add(logoutButton);
+
         header.add(titleLabel, BorderLayout.WEST);
-        header.add(logoutButton, BorderLayout.EAST);
+        header.add(buttonPanel, BorderLayout.EAST);
 
         return header;
     }

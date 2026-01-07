@@ -70,14 +70,69 @@ public class ManagerDashboardView extends JFrame {
         centerPanel.add(greetingLabel);
         centerPanel.add(roleLabel);
 
-        // Right side - Logout button
+        // Right side - Button panel for Export PDF and Logout
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttonPanel.setOpaque(false);
+
+        // Export PDF button
+        JButton exportButton = createExportButton();
         JButton logoutButton = createLogoutButton();
+
+        buttonPanel.add(exportButton);
+        buttonPanel.add(logoutButton);
 
         header.add(titleLabel, BorderLayout.WEST);
         header.add(centerPanel, BorderLayout.CENTER);
-        header.add(logoutButton, BorderLayout.EAST);
+        header.add(buttonPanel, BorderLayout.EAST);
 
         return header;
+    }
+
+    private JButton createExportButton() {
+        JButton button = new JButton("📄 Export PDF") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
+                g2.setColor(getForeground());
+                FontMetrics fm = g2.getFontMetrics();
+                String text = getText();
+                int x = (getWidth() - fm.stringWidth(text)) / 2;
+                int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+                g2.drawString(text, x, y);
+                g2.dispose();
+            }
+        };
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(16, 185, 129));
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setPreferredSize(new Dimension(140, 38));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(new Color(13, 148, 103));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(new Color(16, 185, 129));
+            }
+        });
+
+        button.addActionListener(e -> {
+            com.library.pos.controllers.ReportController reportController =
+                new com.library.pos.controllers.ReportController();
+            reportController.exportToPDF(this, currentUser);
+        });
+
+        return button;
     }
 
     private JButton createLogoutButton() {
