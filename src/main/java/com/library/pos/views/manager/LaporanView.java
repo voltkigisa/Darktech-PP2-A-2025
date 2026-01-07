@@ -5,6 +5,8 @@ import com.library.pos.models.User;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * LaporanView - View untuk melihat laporan transaksi
@@ -12,6 +14,9 @@ import java.awt.*;
 public class LaporanView extends JPanel {
     private final User currentUser;
     private Runnable onBackCallback;
+    
+    // Warna Hijau Emerald yang konsisten
+    private final Color GREEN_EMERALD = new Color(16, 185, 129);
 
     public LaporanView(User currentUser) {
         this.currentUser = currentUser;
@@ -54,7 +59,7 @@ public class LaporanView extends JPanel {
 
         headerPanel.add(titlePanel, BorderLayout.WEST);
 
-        // Back Button
+        // Back Button (Sekarang warna Hijau)
         JButton backButton = createBackButton();
         headerPanel.add(backButton, BorderLayout.EAST);
 
@@ -84,7 +89,7 @@ public class LaporanView extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(getBackground());
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12); // Radius 12px agar konsisten
                 g2.setColor(getForeground());
                 FontMetrics fm = g2.getFontMetrics();
                 String text = getText();
@@ -94,21 +99,24 @@ public class LaporanView extends JPanel {
                 g2.dispose();
             }
         };
+        
         button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        button.setForeground(new Color(108, 117, 125));
-        button.setBackground(new Color(248, 249, 250));
+        button.setForeground(Color.WHITE); // Teks Putih
+        button.setBackground(GREEN_EMERALD); // Background Hijau
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setPreferredSize(new Dimension(120, 38));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(233, 236, 239));
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(new Color(5, 150, 105)); // Hijau lebih gelap saat hover
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(248, 249, 250));
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(GREEN_EMERALD);
             }
         });
 
