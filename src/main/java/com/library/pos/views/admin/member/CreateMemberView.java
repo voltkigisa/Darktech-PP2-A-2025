@@ -1,7 +1,9 @@
 package com.library.pos.views.admin.member;
 
-import com.library.pos.controllers.admin.MemberController;
 import javax.swing.*;
+
+import com.library.pos.controllers.MemberController;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -27,7 +29,7 @@ public class CreateMemberView extends JDialog {
         super(JOptionPane.getFrameForComponent(parent), "Add New Member", true);
         this.parentView = parent;
         this.controller = new MemberController();
-        
+
         initComponents();
         setLocationRelativeTo(JOptionPane.getFrameForComponent(parent));
     }
@@ -76,8 +78,7 @@ public class CreateMemberView extends JDialog {
         formContainer.setBackground(Color.WHITE);
         formContainer.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(35, 35, 35, 35)
-        ));
+                BorderFactory.createEmptyBorder(35, 35, 35, 35)));
 
         // 1. Info Panel (Kotak Hijau)
         formContainer.add(createInfoPanel());
@@ -113,8 +114,7 @@ public class CreateMemberView extends JDialog {
         panel.setBackground(new Color(39, 174, 96, 20)); // Hijau Transparan
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(39, 174, 96), 1),
-                BorderFactory.createEmptyBorder(12, 15, 12, 15)
-        ));
+                BorderFactory.createEmptyBorder(12, 15, 12, 15)));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblInfo = new JLabel("Add New Member");
@@ -162,8 +162,7 @@ public class CreateMemberView extends JDialog {
         textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
         textField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
         return textField;
     }
 
@@ -196,34 +195,39 @@ public class CreateMemberView extends JDialog {
 
         button.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) { button.setBackground(bgColor.darker()); }
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(bgColor.darker());
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) { button.setBackground(bgColor); }
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(bgColor);
+            }
         });
 
         return button;
     }
 
     private void saveMember() {
-    String code = txtCode.getText().trim();
-    String name = txtName.getText().trim();
-    String age = txtAge.getText().trim(); // Controller Anda menerima String untuk age
-    String phone = txtPhone.getText().trim();
-    String address = txtAddress.getText().trim();
+        String code = txtCode.getText().trim();
+        String name = txtName.getText().trim();
+        String age = txtAge.getText().trim(); // Controller Anda menerima String untuk age
+        String phone = txtPhone.getText().trim();
+        String address = txtAddress.getText().trim();
 
-    // Validasi sederhana
-    if (code.isEmpty() || name.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Code dan Nama wajib diisi!");
-        return;
-    }
+        // Validasi sederhana
+        if (code.isEmpty() || name.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Code dan Nama wajib diisi!");
+            return;
+        }
 
-    // GANTI 'create' MENJADI 'save' sesuai dengan isi MemberController Anda
-    if (controller.save(code, name, age, phone, address)) {
-        JOptionPane.showMessageDialog(this, "Member berhasil ditambahkan!");
-        parentView.loadData(); // Pastikan loadData di KelolaMemberView sudah 'public'
-        dispose(); 
-    } else {
-        JOptionPane.showMessageDialog(this, "Gagal menyimpan data ke database!");
+        // GANTI 'create' MENJADI 'save' sesuai dengan isi MemberController Anda
+        if (controller.save(code, name, age, phone, address)) {
+            JOptionPane.showMessageDialog(this, "Member berhasil ditambahkan!");
+            parentView.loadData(); // Pastikan loadData di KelolaMemberView sudah 'public'
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan data ke database!");
+        }
     }
-}
 }

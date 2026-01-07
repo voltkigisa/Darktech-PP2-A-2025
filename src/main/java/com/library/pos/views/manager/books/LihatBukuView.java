@@ -1,4 +1,4 @@
-package com.library.pos.views.manager;
+package com.library.pos.views.manager.books;
 
 import com.library.pos.models.User;
 
@@ -107,6 +107,7 @@ public class LihatBukuView extends JPanel {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(new Color(233, 236, 239));
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(new Color(248, 249, 250));
             }
@@ -121,5 +122,3 @@ public class LihatBukuView extends JPanel {
         return button;
     }
 }
-
-

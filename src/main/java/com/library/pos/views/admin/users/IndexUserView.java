@@ -1,6 +1,6 @@
 package com.library.pos.views.admin.users;
 
-import com.library.pos.controllers.admin.AdminUserController;
+import com.library.pos.controllers.AdminUserController;
 import com.library.pos.models.User;
 import com.library.pos.views.admin.AdminDashboardView;
 

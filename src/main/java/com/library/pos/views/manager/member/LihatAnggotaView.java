@@ -1,6 +1,6 @@
-package com.library.pos.views.manager;
+package com.library.pos.views.manager.member;
 
-import com.library.pos.controllers.admin.MemberController;
+import com.library.pos.controllers.MemberController;
 import com.library.pos.models.User;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,7 +14,7 @@ public class LihatAnggotaView extends JPanel {
     private DefaultTableModel tableModel;
     private JTextField txtMemberCode, txtName, txtAge, txtPhone, txtAddress;
     private int selectedId = -1;
-    
+
     private Runnable onBackCallback;
     private final User currentUser;
 
@@ -25,7 +25,7 @@ public class LihatAnggotaView extends JPanel {
 
     public LihatAnggotaView(User user) {
         this.currentUser = user;
-        
+
         setLayout(new BorderLayout());
         setBackground(new Color(248, 249, 250)); // Mengikuti background TransaksiView
 
@@ -128,10 +128,12 @@ public class LihatAnggotaView extends JPanel {
         tableContainer.setBackground(BG_COLOR);
         tableContainer.setBorder(new LineBorder(new Color(229, 231, 235), 1));
 
-        String[] columns = {"ID", "Code", "Name", "Age", "Phone", "Address"};
+        String[] columns = { "ID", "Code", "Name", "Age", "Phone", "Address" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) { return false; }
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
 
         table = new JTable(tableModel);
@@ -146,7 +148,8 @@ public class LihatAnggotaView extends JPanel {
 
         // --- LOGIKA EVENT ---
         btnSave.addActionListener(e -> {
-            if (controller.save(txtMemberCode.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(), txtAddress.getText())) {
+            if (controller.save(txtMemberCode.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(),
+                    txtAddress.getText())) {
                 JOptionPane.showMessageDialog(this, "Success: Member registered!");
                 refreshTable();
                 clearForm();
@@ -167,7 +170,8 @@ public class LihatAnggotaView extends JPanel {
 
         btnUpdate.addActionListener(e -> {
             if (selectedId != -1) {
-                if (controller.update(selectedId, txtMemberCode.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(), txtAddress.getText())) {
+                if (controller.update(selectedId, txtMemberCode.getText(), txtName.getText(), txtAge.getText(),
+                        txtPhone.getText(), txtAddress.getText())) {
                     JOptionPane.showMessageDialog(this, "Success: Member updated!");
                     refreshTable();
                     clearForm();
@@ -177,7 +181,8 @@ public class LihatAnggotaView extends JPanel {
 
         btnDelete.addActionListener(e -> {
             if (selectedId != -1) {
-                int confirm = JOptionPane.showConfirmDialog(this, "Delete member?", "Warning", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(this, "Delete member?", "Warning",
+                        JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     if (controller.delete(selectedId)) {
                         refreshTable();
@@ -191,57 +196,57 @@ public class LihatAnggotaView extends JPanel {
     }
 
     private JButton createBackButton() {
-    Color greenSuccess = new Color(16, 185, 129); // Hijau Emerald
-    
-    JButton button = new JButton("← Kembali") {
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
-            // Menggambar background bulat warna hijau
-            g2.setColor(getBackground());
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12); // Round lebih melengkung
-            
-            // Menggambar teks putih
-            g2.setColor(getForeground());
-            FontMetrics fm = g2.getFontMetrics();
-            String text = getText();
-            int x = (getWidth() - fm.stringWidth(text)) / 2;
-            int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
-            g2.drawString(text, x, y);
-            g2.dispose();
-        }
-    };
-    
-    button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-    button.setForeground(Color.WHITE); // Teks jadi Putih
-    button.setBackground(greenSuccess); // Background jadi Hijau
-    
-    button.setFocusPainted(false);
-    button.setBorderPainted(false);
-    button.setContentAreaFilled(false);
-    button.setPreferredSize(new Dimension(120, 38));
-    button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        Color greenSuccess = new Color(16, 185, 129); // Hijau Emerald
 
-    button.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseEntered(java.awt.event.MouseEvent evt) {
-            button.setBackground(new Color(5, 150, 105)); 
-        }
+        JButton button = new JButton("← Kembali") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        public void mouseExited(java.awt.event.MouseEvent evt) {
-            button.setBackground(greenSuccess);
-        }
-    });
+                // Menggambar background bulat warna hijau
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12); // Round lebih melengkung
 
-    button.addActionListener(e -> {
-        if (onBackCallback != null) {
-            onBackCallback.run();
-        }
-    });
+                // Menggambar teks putih
+                g2.setColor(getForeground());
+                FontMetrics fm = g2.getFontMetrics();
+                String text = getText();
+                int x = (getWidth() - fm.stringWidth(text)) / 2;
+                int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+                g2.drawString(text, x, y);
+                g2.dispose();
+            }
+        };
 
-    return button;
-}
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setForeground(Color.WHITE); // Teks jadi Putih
+        button.setBackground(greenSuccess); // Background jadi Hijau
+
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setPreferredSize(new Dimension(120, 38));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(5, 150, 105));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(greenSuccess);
+            }
+        });
+
+        button.addActionListener(e -> {
+            if (onBackCallback != null) {
+                onBackCallback.run();
+            }
+        });
+
+        return button;
+    }
 
     private void addLabeledInput(JPanel panel, String labelText, JTextField textField) {
         JLabel label = new JLabel(labelText);
@@ -257,7 +262,8 @@ public class LihatAnggotaView extends JPanel {
         JTextField field = new JTextField();
         field.setPreferredSize(new Dimension(0, 35));
         field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
-        field.setBorder(BorderFactory.createCompoundBorder(new LineBorder(new Color(209, 213, 219), 1), new EmptyBorder(5, 10, 5, 10)));
+        field.setBorder(BorderFactory.createCompoundBorder(new LineBorder(new Color(209, 213, 219), 1),
+                new EmptyBorder(5, 10, 5, 10)));
         return field;
     }
 
@@ -273,8 +279,13 @@ public class LihatAnggotaView extends JPanel {
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) { btn.setBackground(color.brighter()); }
-            public void mouseExited(java.awt.event.MouseEvent evt) { btn.setBackground(color); }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(color.brighter());
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(color);
+            }
         });
         return btn;
     }
@@ -285,7 +296,9 @@ public class LihatAnggotaView extends JPanel {
         table.setSelectionBackground(new Color(238, 242, 255));
     }
 
-    private void refreshTable() { controller.loadDataToTable(tableModel); }
+    private void refreshTable() {
+        controller.loadDataToTable(tableModel);
+    }
 
     private void clearForm() {
         txtMemberCode.setText("");

@@ -43,7 +43,8 @@ public class AdminUserController {
 
         // Check if username already exists
         if (userDAO.getByUsername(username) != null) {
-            JOptionPane.showMessageDialog(null, "Username sudah terdaftar!", "Validasi Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Username sudah terdaftar!", "Validasi Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -52,7 +53,8 @@ public class AdminUserController {
         boolean success = userDAO.create(user);
 
         if (success) {
-            JOptionPane.showMessageDialog(null, "User berhasil ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "User berhasil ditambahkan!", "Sukses",
+                    JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Gagal menambahkan user!", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -73,7 +75,8 @@ public class AdminUserController {
 
         // Check if username exists (excluding current user)
         if (userDAO.usernameExists(username, id)) {
-            JOptionPane.showMessageDialog(null, "Username sudah digunakan oleh user lain!", "Validasi Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Username sudah digunakan oleh user lain!", "Validasi Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -82,7 +85,8 @@ public class AdminUserController {
         boolean success = userDAO.update(user);
 
         if (success) {
-            JOptionPane.showMessageDialog(null, "Data user berhasil diupdate!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Data user berhasil diupdate!", "Sukses",
+                    JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Gagal mengupdate data user!", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -104,7 +108,8 @@ public class AdminUserController {
             boolean success = userDAO.delete(id);
 
             if (success) {
-                JOptionPane.showMessageDialog(null, "User berhasil dihapus!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "User berhasil dihapus!", "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(null, "Gagal menghapus user!", "Error", JOptionPane.ERROR_MESSAGE);
             }

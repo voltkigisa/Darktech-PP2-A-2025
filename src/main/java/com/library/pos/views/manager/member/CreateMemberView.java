@@ -1,4 +1,4 @@
-package com.library.pos.views.admin.member;
+package com.library.pos.views.manager.member;
 
 import javax.swing.*;
 
@@ -9,58 +9,48 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * EditMemberView - Meniru persis style CreateMemberView
- * Tombol Save diganti UPDATE MEMBER
+ * CreateMemberView - Form untuk menambah member baru
+ * Mengikuti style Dashboard dan CreateCategoryView
  */
-public class EditMemberView extends JDialog {
+public class CreateMemberView extends JDialog {
     private MemberController controller;
     private KelolaMemberView parentView;
-    private int memberId; // Menyimpan ID untuk query update
     private JTextField txtCode, txtName, txtAge, txtPhone, txtAddress;
-    private JButton btnUpdate, btnCancel;
+    private JButton btnSave, btnCancel;
 
-    // Palette Warna seragam dengan CreateMemberView kamu
+    // Palette Warna agar seragam dengan Dashboard
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);
     private final Color SECONDARY_COLOR = new Color(149, 165, 166);
     private final Color DARK_COLOR = new Color(44, 62, 80);
     private final Color LIGHT_BG = new Color(236, 240, 241);
 
-    public EditMemberView(KelolaMemberView parent, int id, String code, String name, String age, String phone,
-            String address) {
-        super(JOptionPane.getFrameForComponent(parent), "Edit Member", true);
+    public CreateMemberView(KelolaMemberView parent) {
+        // Mengambil frame utama agar dialog menjadi modal (mengunci layar belakang)
+        super(JOptionPane.getFrameForComponent(parent), "Add New Member", true);
         this.parentView = parent;
-        this.memberId = id;
         this.controller = new MemberController();
 
         initComponents();
-
-        // Mengisi data lama ke dalam field
-        txtCode.setText(code);
-        txtName.setText(name);
-        txtAge.setText(age);
-        txtPhone.setText(phone);
-        txtAddress.setText(address);
-
         setLocationRelativeTo(JOptionPane.getFrameForComponent(parent));
     }
 
     private void initComponents() {
-        setSize(600, 750);
+        setSize(600, 750); // Tinggi disesuaikan dengan jumlah field
         setResizable(false);
         setLayout(new BorderLayout(0, 0));
         getContentPane().setBackground(LIGHT_BG);
 
-        // 1. Header (Judul diganti EDIT MEMBER)
+        // Bagian Atas (Title)
         add(createHeaderPanel(), BorderLayout.NORTH);
 
-        // 2. Form (Persis seperti CreateMemberView)
+        // Bagian Tengah (Form) - Menggunakan ScrollPane jika field bertambah banyak
         JPanel formContent = createFormPanel();
         JScrollPane scrollPane = new JScrollPane(formContent);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
-        // 3. Footer (Tombol UPDATE MEMBER)
+        // Bagian Bawah (Tombol)
         add(createButtonPanel(), BorderLayout.SOUTH);
     }
 
@@ -70,7 +60,7 @@ public class EditMemberView extends JDialog {
         headerPanel.setPreferredSize(new Dimension(0, 80));
         headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
-        JLabel lblTitle = new JLabel("EDIT MEMBER");
+        JLabel lblTitle = new JLabel("ADD NEW MEMBER");
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
         lblTitle.setForeground(Color.WHITE);
 
@@ -90,10 +80,11 @@ public class EditMemberView extends JDialog {
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
                 BorderFactory.createEmptyBorder(35, 35, 35, 35)));
 
-        // Info Panel (Judul di dalam kotak hijau diganti)
+        // 1. Info Panel (Kotak Hijau)
         formContainer.add(createInfoPanel());
         formContainer.add(Box.createRigidArea(new Dimension(0, 25)));
 
+        // 2. Input Fields
         txtCode = createTextField();
         formContainer.add(createFormField("Member Code *", txtCode, "ID unik anggota (Contoh: MBR-001)"));
         formContainer.add(Box.createRigidArea(new Dimension(0, 15)));
@@ -120,18 +111,17 @@ public class EditMemberView extends JDialog {
     private JPanel createInfoPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(new Color(39, 174, 96, 20));
+        panel.setBackground(new Color(39, 174, 96, 20)); // Hijau Transparan
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(39, 174, 96), 1),
                 BorderFactory.createEmptyBorder(12, 15, 12, 15)));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblInfo = new JLabel("Edit Member");
+        JLabel lblInfo = new JLabel("Add New Member");
         lblInfo.setFont(new Font("Segoe UI", Font.BOLD, 13));
         lblInfo.setForeground(new Color(39, 174, 96));
 
-        JLabel lblDetail = new JLabel(
-                "<html>Modify the record for this library member. All fields are required.</html>");
+        JLabel lblDetail = new JLabel("<html>Create a new record for library member. All fields are required.</html>");
         lblDetail.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         lblDetail.setForeground(new Color(52, 73, 94));
 
@@ -180,14 +170,13 @@ public class EditMemberView extends JDialog {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 25));
         panel.setBackground(LIGHT_BG);
 
-        // Teks diganti UPDATE MEMBER
-        btnUpdate = createButton("UPDATE MEMBER", SUCCESS_COLOR);
-        btnUpdate.addActionListener(e -> updateMember());
+        btnSave = createButton("SAVE MEMBER", SUCCESS_COLOR);
+        btnSave.addActionListener(e -> saveMember());
 
         btnCancel = createButton("CANCEL", SECONDARY_COLOR);
         btnCancel.addActionListener(e -> dispose());
 
-        panel.add(btnUpdate);
+        panel.add(btnSave);
         panel.add(btnCancel);
 
         return panel;
@@ -202,7 +191,7 @@ public class EditMemberView extends JDialog {
         button.setBorderPainted(false);
         button.setOpaque(true);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(200, 45)); // Lebih lebar dikit buat teks Update
+        button.setPreferredSize(new Dimension(180, 45));
 
         button.addMouseListener(new MouseAdapter() {
             @Override
@@ -219,25 +208,26 @@ public class EditMemberView extends JDialog {
         return button;
     }
 
-    private void updateMember() {
+    private void saveMember() {
         String code = txtCode.getText().trim();
         String name = txtName.getText().trim();
-        String age = txtAge.getText().trim();
+        String age = txtAge.getText().trim(); // Controller Anda menerima String untuk age
         String phone = txtPhone.getText().trim();
         String address = txtAddress.getText().trim();
 
+        // Validasi sederhana
         if (code.isEmpty() || name.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Code dan Nama wajib diisi!");
             return;
         }
 
-        // Panggil controller.update (Pastikan MemberController punya method update)
-        if (controller.update(memberId, code, name, age, phone, address)) {
-            JOptionPane.showMessageDialog(this, "Member berhasil diperbarui!");
-            parentView.loadData();
+        // GANTI 'create' MENJADI 'save' sesuai dengan isi MemberController Anda
+        if (controller.save(code, name, age, phone, address)) {
+            JOptionPane.showMessageDialog(this, "Member berhasil ditambahkan!");
+            parentView.loadData(); // Pastikan loadData di KelolaMemberView sudah 'public'
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Gagal memperbarui data!");
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan data ke database!");
         }
     }
 }

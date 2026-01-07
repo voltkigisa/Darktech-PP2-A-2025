@@ -1,4 +1,4 @@
-package com.library.pos.controllers.admin;
+package com.library.pos.controllers;
 
 import com.library.pos.dao.MemberDAO;
 import com.library.pos.models.Member;
@@ -14,14 +14,14 @@ public class MemberController {
         try {
             List<Member> list = memberDAO.getAll();
             for (Member m : list) {
-        
-                model.addRow(new Object[]{
-                    m.getId(),
-                    m.getMember_code(),
-                    m.getName(), 
-                    m.getAge(), 
-                    m.getPhone(), 
-                    m.getAddress()
+
+                model.addRow(new Object[] {
+                        m.getId(),
+                        m.getMember_code(),
+                        m.getName(),
+                        m.getAge(),
+                        m.getPhone(),
+                        m.getAddress()
                 });
             }
         } catch (SQLException e) {
@@ -33,9 +33,9 @@ public class MemberController {
         try {
             memberDAO.insert(new Member(0, member_code, name, age, phone, address));
             return true;
-        } catch (SQLException e) { 
+        } catch (SQLException e) {
             e.printStackTrace();
-            return false; 
+            return false;
         }
     }
 
@@ -43,9 +43,9 @@ public class MemberController {
         try {
             memberDAO.update(new Member(id, member_code, name, age, phone, address));
             return true;
-        } catch (SQLException e) { 
+        } catch (SQLException e) {
             e.printStackTrace();
-            return false; 
+            return false;
         }
     }
 
@@ -53,9 +53,9 @@ public class MemberController {
         try {
             memberDAO.delete(id);
             return true;
-        } catch (SQLException e) { 
+        } catch (SQLException e) {
             e.printStackTrace();
-            return false; 
+            return false;
         }
     }
 }

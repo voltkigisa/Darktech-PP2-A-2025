@@ -1,6 +1,8 @@
 package com.library.pos.views.manager;
 
 import com.library.pos.models.User;
+import com.library.pos.views.manager.borrowings.TransaksiView;
+import com.library.pos.views.manager.member.LihatAnggotaView;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -127,8 +129,7 @@ public class ManagerDashboardView extends JFrame {
         });
 
         button.addActionListener(e -> {
-            com.library.pos.controllers.ReportController reportController =
-                new com.library.pos.controllers.ReportController();
+            com.library.pos.controllers.ReportController reportController = new com.library.pos.controllers.ReportController();
             reportController.exportToPDF(this, currentUser);
         });
 
@@ -390,20 +391,19 @@ public class ManagerDashboardView extends JFrame {
     }
 
     private void showLihatBuku() {
-    contentPanel.removeAll();
-    
-    com.library.pos.views.manager.books.IndexBookView bookView = 
-        new com.library.pos.views.manager.books.IndexBookView();
+        contentPanel.removeAll();
 
-    // HUBUNGKAN CALLBACK KE DASHBOARD
-    bookView.setOnBackCallback(() -> {
-        showDashboard();
-    });
+        com.library.pos.views.manager.books.IndexBookView bookView = new com.library.pos.views.manager.books.IndexBookView();
 
-    contentPanel.add(bookView, BorderLayout.CENTER);
-    contentPanel.revalidate();
-    contentPanel.repaint();
-}
+        // HUBUNGKAN CALLBACK KE DASHBOARD
+        bookView.setOnBackCallback(() -> {
+            showDashboard();
+        });
+
+        contentPanel.add(bookView, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
 
     private void showLihatAnggota() {
         contentPanel.removeAll();
@@ -414,21 +414,19 @@ public class ManagerDashboardView extends JFrame {
         contentPanel.repaint();
     }
 
-   private void showCategories() {
-    contentPanel.removeAll();
+    private void showCategories() {
+        contentPanel.removeAll();
 
-    com.library.pos.views.manager.categories.IndexCategoryView categoryView = 
-        new com.library.pos.views.manager.categories.IndexCategoryView();
+        com.library.pos.views.manager.categories.IndexCategoryView categoryView = new com.library.pos.views.manager.categories.IndexCategoryView();
 
+        categoryView.setOnBackCallback(() -> {
+            showDashboard();
+        });
 
-    categoryView.setOnBackCallback(() -> {
-        showDashboard(); 
-    });
-
-    contentPanel.add(categoryView, BorderLayout.CENTER);
-    contentPanel.revalidate();
-    contentPanel.repaint();
-}
+        contentPanel.add(categoryView, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
 
     private void showTransaksi() {
         contentPanel.removeAll();
@@ -439,11 +437,11 @@ public class ManagerDashboardView extends JFrame {
         contentPanel.repaint();
     }
 
-   private void showDenda() {
+    private void showDenda() {
         contentPanel.removeAll();
         com.library.pos.views.manager.fines.IndexFineView fineView = new com.library.pos.views.manager.fines.IndexFineView(
                 currentUser);
-        
+
         fineView.setOnBackCallback(() -> {
             showDashboard();
         });
@@ -455,12 +453,12 @@ public class ManagerDashboardView extends JFrame {
 
     private void showLaporan() {
         contentPanel.removeAll();
-        
-        com.library.pos.views.manager.reports.IndexReportView reportView = 
-            new com.library.pos.views.manager.reports.IndexReportView(currentUser);
-        
+
+        com.library.pos.views.manager.reports.IndexReportView reportView = new com.library.pos.views.manager.reports.IndexReportView(
+                currentUser);
+
         reportView.setOnBackCallback(() -> showDashboard());
-        
+
         contentPanel.add(reportView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
@@ -473,5 +471,5 @@ public class ManagerDashboardView extends JFrame {
             dashboard.setVisible(true);
         });
     }
-    
+
 }

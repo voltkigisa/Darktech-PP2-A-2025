@@ -1,4 +1,4 @@
-package com.library.pos.views.manager;
+package com.library.pos.views.admin.reports;
 
 import com.library.pos.models.User;
 
@@ -14,7 +14,7 @@ import java.awt.event.MouseEvent;
 public class LaporanView extends JPanel {
     private final User currentUser;
     private Runnable onBackCallback;
-    
+
     // Warna Hijau Emerald yang konsisten
     private final Color GREEN_EMERALD = new Color(16, 185, 129);
 
@@ -99,7 +99,7 @@ public class LaporanView extends JPanel {
                 g2.dispose();
             }
         };
-        
+
         button.setFont(new Font("Segoe UI", Font.BOLD, 14));
         button.setForeground(Color.WHITE); // Teks Putih
         button.setBackground(GREEN_EMERALD); // Background Hijau
@@ -114,6 +114,7 @@ public class LaporanView extends JPanel {
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(new Color(5, 150, 105)); // Hijau lebih gelap saat hover
             }
+
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(GREEN_EMERALD);

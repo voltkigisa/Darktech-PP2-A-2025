@@ -1,6 +1,6 @@
 package com.library.pos.views.admin.users;
 
-import com.library.pos.controllers.admin.AdminUserController;
+import com.library.pos.controllers.AdminUserController;
 import com.library.pos.models.User;
 
 import javax.swing.*;
@@ -71,8 +71,7 @@ public class EditUserView extends JDialog {
         formContainer.setBackground(Color.WHITE);
         formContainer.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(35, 35, 35, 35)
-        ));
+                BorderFactory.createEmptyBorder(35, 35, 35, 35)));
 
         // Info panel
         JPanel infoPanel = createInfoPanel();
@@ -81,7 +80,8 @@ public class EditUserView extends JDialog {
 
         // Username field
         txtUsername = createTextField();
-        formContainer.add(createFormField("Username *", txtUsername, "Minimal 3 karakter, hanya huruf, angka, underscore"));
+        formContainer
+                .add(createFormField("Username *", txtUsername, "Minimal 3 karakter, hanya huruf, angka, underscore"));
         formContainer.add(Box.createRigidArea(new Dimension(0, 20)));
 
         // Name field
@@ -96,7 +96,7 @@ public class EditUserView extends JDialog {
         formContainer.add(Box.createRigidArea(new Dimension(0, 20)));
 
         // Role combobox
-        cbRole = new JComboBox<>(new String[]{"Pilih Role", "ADMIN", "MANAGER"});
+        cbRole = new JComboBox<>(new String[] { "Pilih Role", "ADMIN", "MANAGER" });
         cbRole.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         cbRole.setPreferredSize(new Dimension(0, 45));
         cbRole.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
@@ -116,8 +116,7 @@ public class EditUserView extends JDialog {
         panel.setBackground(new Color(52, 152, 219, 20));
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(52, 152, 219), 1),
-                BorderFactory.createEmptyBorder(12, 15, 12, 15)
-        ));
+                BorderFactory.createEmptyBorder(12, 15, 12, 15)));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblInfo = new JLabel("Edit Data User ID: " + user.getId());
@@ -174,8 +173,7 @@ public class EditUserView extends JDialog {
         textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
         textField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
     }
 
     private JPanel createButtonPanel() {

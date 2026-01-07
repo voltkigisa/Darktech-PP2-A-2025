@@ -1,4 +1,4 @@
-package com.library.pos.views.admin.member;
+package com.library.pos.views.manager.member;
 
 import javax.swing.*;
 
