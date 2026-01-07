@@ -135,8 +135,7 @@ public class IndexBookView extends JPanel {
         tableContainer.setBackground(Color.WHITE);
         tableContainer.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(25, 25, 25, 25)
-        ));
+                BorderFactory.createEmptyBorder(25, 25, 25, 25)));
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.WHITE);
@@ -150,7 +149,59 @@ public class IndexBookView extends JPanel {
         btnAdd.addActionListener(e -> openCreateDialog());
 
         topPanel.add(tableTitle, BorderLayout.WEST);
-        topPanel.add(btnAdd, BorderLayout.EAST);
+
+        // Search and filter panel
+        JPanel searchFilterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        searchFilterPanel.setBackground(Color.WHITE);
+
+        searchField = new JTextField(15);
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
+        searchField.setText("Search...");
+        searchField.setForeground(Color.GRAY);
+        searchField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (searchField.getText().equals("Search...")) {
+                    searchField.setText("");
+                    searchField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (searchField.getText().isEmpty()) {
+                    searchField.setText("Search...");
+                    searchField.setForeground(Color.GRAY);
+                }
+            }
+        });
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+        });
+
+        String[] genres = { "Semua Genre", "Novel", "Fiksi", "Non-Fiksi", "Sejarah", "Sains", "Teknologi", "Biografi" };
+        filterGenre = new JComboBox<>(genres);
+        filterGenre.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        filterGenre.setPreferredSize(new Dimension(130, 35));
+        filterGenre.addActionListener(e -> filterData());
+
+        searchFilterPanel.add(new JLabel("Filter:"));
+        searchFilterPanel.add(filterGenre);
+        searchFilterPanel.add(searchField);
+        searchFilterPanel.add(btnAdd);
+
+        topPanel.add(searchFilterPanel, BorderLayout.EAST);
 
         String[] columns = {"ID", "ISBN", "Title", "Author", "Publisher", "Stock", "Aksi"};
         tableModel = new DefaultTableModel(columns, 0) {
@@ -253,20 +304,38 @@ public class IndexBookView extends JPanel {
     }
 
     public void loadData() {
-        tableModel.setRowCount(0);
-        List<Book> books = controller.getAllBooks();
+        allBooks = controller.getAllBooks();
+        filterData();
+    }
 
-        for (Book book : books) {
-            Object[] row = {
-                    book.getId(),
-                    book.getIsbn() != null ? book.getIsbn() : "-",
-                    book.getTitle(),
-                    book.getAuthor() != null ? book.getAuthor() : "-",
-                    book.getPublisher() != null ? book.getPublisher() : "-",
-                    book.getStock(),
-                    book.getId()
-            };
-            tableModel.addRow(row);
+    private void filterData() {
+        tableModel.setRowCount(0);
+        String searchText = searchField.getText().toLowerCase();
+        if (searchText.equals("search..."))
+            searchText = "";
+        String selectedGenre = (String) filterGenre.getSelectedItem();
+
+        for (Book book : allBooks) {
+            boolean matchesSearch = searchText.isEmpty() ||
+                    book.getTitle().toLowerCase().contains(searchText) ||
+                    (book.getIsbn() != null && book.getIsbn().toLowerCase().contains(searchText)) ||
+                    (book.getAuthor() != null && book.getAuthor().toLowerCase().contains(searchText));
+
+            boolean matchesGenre = selectedGenre.equals("Semua Genre") ||
+                    (book.getGenre() != null && book.getGenre().equalsIgnoreCase(selectedGenre));
+
+            if (matchesSearch && matchesGenre) {
+                Object[] row = {
+                        book.getId(),
+                        book.getIsbn() != null ? book.getIsbn() : "-",
+                        book.getTitle(),
+                        book.getAuthor() != null ? book.getAuthor() : "-",
+                        book.getPublisher() != null ? book.getPublisher() : "-",
+                        book.getStock(),
+                        book.getId()
+                };
+                tableModel.addRow(row);
+            }
         }
     }
 

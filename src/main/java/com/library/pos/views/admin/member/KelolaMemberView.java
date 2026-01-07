@@ -109,7 +109,6 @@ public class KelolaMemberView extends JPanel {
         };
 
         table = new JTable(tableModel);
-        setupTableStyle();
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
@@ -298,6 +297,25 @@ public class KelolaMemberView extends JPanel {
         public Component getTableCellEditorComponent(JTable t, Object v, boolean s, int r, int c) {
             memberId = (int) t.getValueAt(r, 0);
             return panel;
+        }
+    }
+
+    private void refreshTable() {
+        controller.loadDataToTable(tableModel);
+    }
+
+    private void setupTableStyle() {
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        table.setRowHeight(35);
+        table.setShowGrid(false);
+        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setSelectionBackground(new Color(99, 102, 241, 30));
+        table.setSelectionForeground(TEXT_COLOR);
+        
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
     }
 }

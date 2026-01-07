@@ -134,8 +134,7 @@ public class IndexCategoryView extends JPanel {
         tableContainer.setBackground(Color.WHITE);
         tableContainer.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(25, 25, 25, 25)
-        ));
+                BorderFactory.createEmptyBorder(25, 25, 25, 25)));
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.WHITE);
@@ -149,7 +148,51 @@ public class IndexCategoryView extends JPanel {
         btnAdd.addActionListener(e -> openCreateDialog());
 
         topPanel.add(tableTitle, BorderLayout.WEST);
-        topPanel.add(btnAdd, BorderLayout.EAST);
+
+        // Search panel
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        searchPanel.setBackground(Color.WHITE);
+
+        searchField = new JTextField(15);
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
+        searchField.setText("Search...");
+        searchField.setForeground(Color.GRAY);
+        searchField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (searchField.getText().equals("Search...")) {
+                    searchField.setText("");
+                    searchField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (searchField.getText().isEmpty()) {
+                    searchField.setText("Search...");
+                    searchField.setForeground(Color.GRAY);
+                }
+            }
+        });
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+        });
+
+        searchPanel.add(searchField);
+        searchPanel.add(btnAdd);
+
+        topPanel.add(searchPanel, BorderLayout.EAST);
 
         String[] columns = {"ID", "Category Name", "Created Date", "Aksi"};
         tableModel = new DefaultTableModel(columns, 0) {
@@ -194,7 +237,7 @@ public class IndexCategoryView extends JPanel {
                 return this;
             }
         };
-        
+
         for (int i = 0; i < 3; i++) {
             categoryTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
@@ -252,17 +295,31 @@ public class IndexCategoryView extends JPanel {
     }
 
     public void loadData() {
-        tableModel.setRowCount(0);
-        List<Category> categories = controller.getAllCategories();
+        allCategories = controller.getAllCategories();
+        filterData();
+    }
 
-        for (Category category : categories) {
-            Object[] row = {
-                    category.getId(),
-                    category.getName(),
-                    category.getCreatedAt() != null ? category.getCreatedAt().toString().substring(0, 19).replace("T", " ") : "-",
-                    category.getId()
-            };
-            tableModel.addRow(row);
+    private void filterData() {
+        tableModel.setRowCount(0);
+        String searchText = searchField.getText().toLowerCase();
+        if (searchText.equals("search..."))
+            searchText = "";
+
+        for (Category category : allCategories) {
+            boolean matchesSearch = searchText.isEmpty() ||
+                    category.getName().toLowerCase().contains(searchText);
+
+            if (matchesSearch) {
+                Object[] row = {
+                        category.getId(),
+                        category.getName(),
+                        category.getCreatedAt() != null
+                                ? category.getCreatedAt().toString().substring(0, 19).replace("T", " ")
+                                : "-",
+                        category.getId()
+                };
+                tableModel.addRow(row);
+            }
         }
     }
 

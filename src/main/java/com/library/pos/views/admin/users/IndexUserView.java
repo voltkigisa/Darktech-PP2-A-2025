@@ -20,6 +20,9 @@ public class IndexUserView extends JPanel {
     private JTable userTable;
     private DefaultTableModel tableModel;
     private JButton btnAdd;
+    private JTextField searchField;
+    private JComboBox<String> filterRole;
+    private List<User> allUsers;
 
     // Color scheme - matching dashboard
     private final Color PRIMARY_COLOR = new Color(59, 130, 246);
@@ -84,8 +87,7 @@ public class IndexUserView extends JPanel {
         tableContainer.setBackground(Color.WHITE);
         tableContainer.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-                BorderFactory.createEmptyBorder(25, 25, 25, 25)
-        ));
+                BorderFactory.createEmptyBorder(25, 25, 25, 25)));
 
         // Top panel with title and add button
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -100,10 +102,64 @@ public class IndexUserView extends JPanel {
         btnAdd.addActionListener(e -> openCreateView());
 
         topPanel.add(tableTitle, BorderLayout.WEST);
-        topPanel.add(btnAdd, BorderLayout.EAST);
+
+        // Search and filter panel
+        JPanel searchFilterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        searchFilterPanel.setBackground(Color.WHITE);
+
+        // Search field
+        searchField = new JTextField(15);
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
+        searchField.setText("Search...");
+        searchField.setForeground(Color.GRAY);
+        searchField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (searchField.getText().equals("Search...")) {
+                    searchField.setText("");
+                    searchField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (searchField.getText().isEmpty()) {
+                    searchField.setText("Search...");
+                    searchField.setForeground(Color.GRAY);
+                }
+            }
+        });
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filterData();
+            }
+        });
+
+        // Role filter
+        String[] roles = { "Semua Role", "ADMIN", "MANAGER" };
+        filterRole = new JComboBox<>(roles);
+        filterRole.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        filterRole.setPreferredSize(new Dimension(120, 35));
+        filterRole.addActionListener(e -> filterData());
+
+        searchFilterPanel.add(new JLabel("Filter:"));
+        searchFilterPanel.add(filterRole);
+        searchFilterPanel.add(searchField);
+        searchFilterPanel.add(btnAdd);
+
+        topPanel.add(searchFilterPanel, BorderLayout.EAST);
 
         // Table with action buttons in column
-        String[] columns = {"ID", "Username", "Nama Lengkap", "Role", "Tanggal Dibuat", "Aksi"};
+        String[] columns = { "ID", "Username", "Nama Lengkap", "Role", "Tanggal Dibuat", "Aksi" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -150,7 +206,7 @@ public class IndexUserView extends JPanel {
                 return this;
             }
         };
-        
+
         for (int i = 0; i < 5; i++) {
             userTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
@@ -217,19 +273,37 @@ public class IndexUserView extends JPanel {
     }
 
     public void loadData() {
-        tableModel.setRowCount(0);
-        List<User> users = controller.getAllUsers();
+        allUsers = controller.getAllUsers();
+        filterData();
+    }
 
-        for (User user : users) {
-            Object[] row = {
-                    user.getId(),
-                    user.getUsername(),
-                    user.getName(),
-                    user.getRole(),
-                    user.getCreatedAt() != null ? user.getCreatedAt().toString().substring(0, 19).replace("T", " ") : "-",
-                    user.getId() // Pass ID for action buttons
-            };
-            tableModel.addRow(row);
+    private void filterData() {
+        tableModel.setRowCount(0);
+        String searchText = searchField.getText().toLowerCase();
+        if (searchText.equals("search..."))
+            searchText = "";
+        String selectedRole = (String) filterRole.getSelectedItem();
+
+        for (User user : allUsers) {
+            boolean matchesSearch = searchText.isEmpty() ||
+                    user.getUsername().toLowerCase().contains(searchText) ||
+                    user.getName().toLowerCase().contains(searchText);
+
+            boolean matchesRole = selectedRole.equals("Semua Role") ||
+                    user.getRole().equals(selectedRole);
+
+            if (matchesSearch && matchesRole) {
+                Object[] row = {
+                        user.getId(),
+                        user.getUsername(),
+                        user.getName(),
+                        user.getRole(),
+                        user.getCreatedAt() != null ? user.getCreatedAt().toString().substring(0, 19).replace("T", " ")
+                                : "-",
+                        user.getId()
+                };
+                tableModel.addRow(row);
+            }
         }
     }
 
@@ -292,7 +366,7 @@ public class IndexUserView extends JPanel {
 
         public ActionButtonEditor(JCheckBox checkBox) {
             super(checkBox);
-            
+
             panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
             panel.setBackground(Color.WHITE);
 
