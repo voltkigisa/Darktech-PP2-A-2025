@@ -19,17 +19,23 @@ public class IndexCategoryView extends JPanel {
     private JTable categoryTable;
     private DefaultTableModel tableModel;
     private JButton btnAdd;
+    private Runnable onBackCallback;
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);
     private final Color DANGER_COLOR = new Color(231, 76, 60);
     private final Color DARK_COLOR = new Color(44, 62, 80);
     private final Color LIGHT_BG = new Color(236, 240, 241);
+    private final Color GREEN_EMERALD = new Color(16, 185, 129);
 
     public IndexCategoryView() {
         this.controller = new CategoryController();
         initComponents();
         loadData();
+    }
+    
+    public void setOnBackCallback(Runnable callback) {
+        this.onBackCallback = callback;
     }
 
     private void initComponents() {
@@ -69,9 +75,56 @@ public class IndexCategoryView extends JPanel {
         titlePanel.add(lblSubtitle);
 
         headerPanel.add(titlePanel, BorderLayout.WEST);
+        headerPanel.add(createTopBackButton(), BorderLayout.EAST);
 
         return headerPanel;
     }
+        private JButton createTopBackButton() {
+            JButton button = new JButton("← Kembali") {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(getBackground());
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                    g2.setColor(getForeground());
+                    FontMetrics fm = g2.getFontMetrics();
+                    String text = getText();
+                    int x = (getWidth() - fm.stringWidth(text)) / 2;
+                    int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+                    g2.drawString(text, x, y);
+                    g2.dispose();
+                }
+            };
+
+            button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            button.setForeground(Color.WHITE);
+            button.setBackground(GREEN_EMERALD);
+            button.setFocusPainted(false);
+            button.setBorderPainted(false);
+            button.setContentAreaFilled(false);
+            button.setPreferredSize(new Dimension(120, 38));
+            button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    button.setBackground(new Color(5, 150, 105)); // Warna hijau lebih gelap saat hover
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    button.setBackground(GREEN_EMERALD);
+                }
+            });
+
+            button.addActionListener(e -> {
+                if (onBackCallback != null) {
+                    onBackCallback.run();
+                }
+            });
+
+            return button;
+        }
 
     private JPanel createTablePanel() {
         JPanel mainPanel = new JPanel(new BorderLayout(0, 15));
@@ -84,7 +137,6 @@ public class IndexCategoryView extends JPanel {
                 BorderFactory.createEmptyBorder(25, 25, 25, 25)
         ));
 
-        // Top panel with title and add button
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.WHITE);
         topPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
@@ -99,7 +151,6 @@ public class IndexCategoryView extends JPanel {
         topPanel.add(tableTitle, BorderLayout.WEST);
         topPanel.add(btnAdd, BorderLayout.EAST);
 
-        // Table with action buttons in column
         String[] columns = {"ID", "Category Name", "Created Date", "Aksi"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -157,7 +208,6 @@ public class IndexCategoryView extends JPanel {
 
         tableContainer.add(topPanel, BorderLayout.NORTH);
         tableContainer.add(scrollPane, BorderLayout.CENTER);
-
         mainPanel.add(tableContainer, BorderLayout.CENTER);
 
         return mainPanel;
@@ -176,12 +226,10 @@ public class IndexCategoryView extends JPanel {
 
         button.addMouseListener(new MouseAdapter() {
             Color original = bgColor;
-
             @Override
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(bgColor.darker());
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(original);
@@ -226,16 +274,12 @@ public class IndexCategoryView extends JPanel {
     private void openShowDialog(int categoryId) {
         Category category = controller.getCategoryById(categoryId);
         if (category != null) {
-            ShowCategoryView showView = new ShowCategoryView(this, category);
-            showView.setVisible(true);
         }
     }
 
     private void openEditDialog(int categoryId) {
         Category category = controller.getCategoryById(categoryId);
         if (category != null) {
-            EditCategoryView editView = new EditCategoryView(this, category);
-            editView.setVisible(true);
         }
     }
 
@@ -246,19 +290,12 @@ public class IndexCategoryView extends JPanel {
     }
 
     class ActionButtonRenderer extends JPanel implements javax.swing.table.TableCellRenderer {
-        private JButton btnShow, btnEdit, btnDelete;
-
         public ActionButtonRenderer() {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
             setBackground(Color.WHITE);
-
-            btnShow = createSmallButton("Detail", new Color(52, 152, 219));
-            btnEdit = createSmallButton("Edit", PRIMARY_COLOR);
-            btnDelete = createSmallButton("Hapus", DANGER_COLOR);
-
-            add(btnShow);
-            add(btnEdit);
-            add(btnDelete);
+            add(createSmallButton("Detail", new Color(52, 152, 219)));
+            add(createSmallButton("Edit", PRIMARY_COLOR));
+            add(createSmallButton("Hapus", DANGER_COLOR));
         }
 
         @Override
@@ -270,29 +307,25 @@ public class IndexCategoryView extends JPanel {
 
     class ActionButtonEditor extends DefaultCellEditor {
         private JPanel panel;
-        private JButton btnShow, btnEdit, btnDelete;
         private int categoryId;
 
         public ActionButtonEditor(JCheckBox checkBox) {
             super(checkBox);
-            
             panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
             panel.setBackground(Color.WHITE);
 
-            btnShow = createSmallButton("Detail", new Color(52, 152, 219));
-            btnEdit = createSmallButton("Edit", PRIMARY_COLOR);
-            btnDelete = createSmallButton("Hapus", DANGER_COLOR);
+            JButton btnShow = createSmallButton("Detail", new Color(52, 152, 219));
+            JButton btnEdit = createSmallButton("Edit", PRIMARY_COLOR);
+            JButton btnDelete = createSmallButton("Hapus", DANGER_COLOR);
 
             btnShow.addActionListener(e -> {
                 fireEditingStopped();
                 openShowDialog(categoryId);
             });
-
             btnEdit.addActionListener(e -> {
                 fireEditingStopped();
                 openEditDialog(categoryId);
             });
-
             btnDelete.addActionListener(e -> {
                 fireEditingStopped();
                 deleteCategory(categoryId);

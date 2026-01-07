@@ -335,14 +335,19 @@ public class ManagerDashboardView extends JFrame {
     }
 
     private void showLihatBuku() {
-        contentPanel.removeAll();
+    contentPanel.removeAll();
+    
+    com.library.pos.views.manager.books.IndexBookView bookView = 
+        new com.library.pos.views.manager.books.IndexBookView();
 
-        com.library.pos.views.manager.books.IndexBookView bookView = new com.library.pos.views.manager.books.IndexBookView();
+    bookView.setOnBackCallback(() -> {
+        showDashboard();
+    });
 
-        contentPanel.add(bookView, BorderLayout.CENTER);
-        contentPanel.revalidate();
-        contentPanel.repaint();
-    }
+    contentPanel.add(bookView, BorderLayout.CENTER);
+    contentPanel.revalidate();
+    contentPanel.repaint();
+}
 
     private void showLihatAnggota() {
         contentPanel.removeAll();
@@ -353,15 +358,21 @@ public class ManagerDashboardView extends JFrame {
         contentPanel.repaint();
     }
 
-    private void showCategories() {
-        contentPanel.removeAll();
+   private void showCategories() {
+    contentPanel.removeAll();
 
-        com.library.pos.views.manager.categories.IndexCategoryView categoryView = new com.library.pos.views.manager.categories.IndexCategoryView();
+    com.library.pos.views.manager.categories.IndexCategoryView categoryView = 
+        new com.library.pos.views.manager.categories.IndexCategoryView();
 
-        contentPanel.add(categoryView, BorderLayout.CENTER);
-        contentPanel.revalidate();
-        contentPanel.repaint();
-    }
+
+    categoryView.setOnBackCallback(() -> {
+        showDashboard(); 
+    });
+
+    contentPanel.add(categoryView, BorderLayout.CENTER);
+    contentPanel.revalidate();
+    contentPanel.repaint();
+}
 
     private void showTransaksi() {
         contentPanel.removeAll();
@@ -372,10 +383,15 @@ public class ManagerDashboardView extends JFrame {
         contentPanel.repaint();
     }
 
-    private void showDenda() {
+   private void showDenda() {
         contentPanel.removeAll();
         com.library.pos.views.manager.fines.IndexFineView fineView = new com.library.pos.views.manager.fines.IndexFineView(
                 currentUser);
+        
+        fineView.setOnBackCallback(() -> {
+            showDashboard();
+        });
+
         contentPanel.add(fineView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
@@ -397,4 +413,5 @@ public class ManagerDashboardView extends JFrame {
             dashboard.setVisible(true);
         });
     }
+    
 }

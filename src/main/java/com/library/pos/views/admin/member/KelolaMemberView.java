@@ -15,7 +15,7 @@ public class KelolaMemberView extends JPanel {
     private JTextField txtMemberCode, txtName, txtAge, txtPhone, txtAddress;
     private int selectedId = -1;
 
-    // Warna Tema (Senada dengan Dashboard)
+
     private final Color PRIMARY_COLOR = new Color(99, 102, 241); // Indigo
     private final Color DANGER_COLOR = new Color(239, 68, 68);  // Red
     private final Color BG_COLOR = Color.WHITE;
