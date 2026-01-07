@@ -270,7 +270,7 @@ public class AdminDashboardView extends JFrame {
         buttonPanel.setBackground(Color.WHITE);
 
         // Export PDF button
-        JButton exportButton = createStyledButton("📄 Export PDF", new Color(16, 185, 129));
+        JButton exportButton = createStyledButton("Export PDF", new Color(16, 185, 129));
         exportButton.addActionListener(e -> {
             com.library.pos.controllers.ReportController reportController =
                 new com.library.pos.controllers.ReportController();
@@ -594,26 +594,10 @@ public class AdminDashboardView extends JFrame {
     private void showLaporanContent() {
         contentPanel.removeAll();
 
-        JPanel laporanPanel = new JPanel();
-        laporanPanel.setLayout(new BoxLayout(laporanPanel, BoxLayout.Y_AXIS));
-        laporanPanel.setBackground(Color.WHITE);
-        laporanPanel.setBorder(new EmptyBorder(100, 50, 100, 50));
+        com.library.pos.views.admin.reports.IndexReportView reportView = 
+            new com.library.pos.views.admin.reports.IndexReportView(currentUser);
 
-        JLabel titleLabel = new JLabel("Reports");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        titleLabel.setForeground(new Color(31, 41, 55));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel messageLabel = new JLabel("Report feature is under development");
-        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        messageLabel.setForeground(new Color(107, 114, 128));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        laporanPanel.add(titleLabel);
-        laporanPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        laporanPanel.add(messageLabel);
-
-        contentPanel.add(laporanPanel, BorderLayout.CENTER);
+        contentPanel.add(reportView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }

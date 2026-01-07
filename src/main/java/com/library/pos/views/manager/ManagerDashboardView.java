@@ -89,7 +89,7 @@ public class ManagerDashboardView extends JFrame {
     }
 
     private JButton createExportButton() {
-        JButton button = new JButton("📄 Export PDF") {
+        JButton button = new JButton("Export PDF") {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -455,9 +455,13 @@ public class ManagerDashboardView extends JFrame {
 
     private void showLaporan() {
         contentPanel.removeAll();
-        LaporanView laporanView = new LaporanView(currentUser);
-        laporanView.setOnBackCallback(() -> showDashboard());
-        contentPanel.add(laporanView, BorderLayout.CENTER);
+        
+        com.library.pos.views.manager.reports.IndexReportView reportView = 
+            new com.library.pos.views.manager.reports.IndexReportView(currentUser);
+        
+        reportView.setOnBackCallback(() -> showDashboard());
+        
+        contentPanel.add(reportView, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
