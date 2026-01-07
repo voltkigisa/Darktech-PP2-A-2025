@@ -19,20 +19,22 @@ public class IndexBookView extends JPanel {
     private JTable bookTable;
     private DefaultTableModel tableModel;
     private JButton btnAdd;
-    private JTextField searchField;
-    private JComboBox<String> filterGenre;
-    private List<Book> allBooks;
+    private Runnable onBackCallback;
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);
     private final Color DANGER_COLOR = new Color(231, 76, 60);
     private final Color DARK_COLOR = new Color(44, 62, 80);
     private final Color LIGHT_BG = new Color(236, 240, 241);
+    private final Color GREEN_EMERALD = new Color(16, 185, 129); // Warna untuk tombol kembali
 
     public IndexBookView() {
         this.controller = new BookController();
         initComponents();
         loadData();
+    }
+    public void setOnBackCallback(Runnable callback) {
+        this.onBackCallback = callback;
     }
 
     private void initComponents() {
@@ -72,8 +74,57 @@ public class IndexBookView extends JPanel {
         titlePanel.add(lblSubtitle);
 
         headerPanel.add(titlePanel, BorderLayout.WEST);
+        
+        headerPanel.add(createTopBackButton(), BorderLayout.EAST);
 
         return headerPanel;
+    }
+
+    private JButton createTopBackButton() {
+        JButton button = new JButton("← Kembali") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                g2.setColor(getForeground());
+                FontMetrics fm = g2.getFontMetrics();
+                String text = getText();
+                int x = (getWidth() - fm.stringWidth(text)) / 2;
+                int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+                g2.drawString(text, x, y);
+                g2.dispose();
+            }
+        };
+
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(GREEN_EMERALD);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setPreferredSize(new Dimension(120, 38));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(new Color(5, 150, 105));
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(GREEN_EMERALD);
+            }
+        });
+
+        button.addActionListener(e -> {
+            if (onBackCallback != null) {
+                onBackCallback.run();
+            }
+        });
+
+        return button;
     }
 
     private JPanel createTablePanel() {
@@ -86,7 +137,6 @@ public class IndexBookView extends JPanel {
                 BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
                 BorderFactory.createEmptyBorder(25, 25, 25, 25)));
 
-        // Top panel with title and add button
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.WHITE);
         topPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
@@ -153,8 +203,7 @@ public class IndexBookView extends JPanel {
 
         topPanel.add(searchFilterPanel, BorderLayout.EAST);
 
-        // Table with action buttons in column
-        String[] columns = { "ID", "ISBN", "Title", "Author", "Publisher", "Stock", "Aksi" };
+        String[] columns = {"ID", "ISBN", "Title", "Author", "Publisher", "Stock", "Aksi"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -180,7 +229,6 @@ public class IndexBookView extends JPanel {
         bookTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
         bookTable.getTableHeader().setReorderingAllowed(false);
 
-        // Set column widths
         bookTable.getColumnModel().getColumn(0).setPreferredWidth(50);
         bookTable.getColumnModel().getColumn(1).setPreferredWidth(120);
         bookTable.getColumnModel().getColumn(2).setPreferredWidth(250);
@@ -189,7 +237,6 @@ public class IndexBookView extends JPanel {
         bookTable.getColumnModel().getColumn(5).setPreferredWidth(80);
         bookTable.getColumnModel().getColumn(6).setPreferredWidth(280);
 
-        // Center align for all columns except action
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
@@ -204,7 +251,6 @@ public class IndexBookView extends JPanel {
             bookTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
-        // Action column renderer with buttons
         bookTable.getColumnModel().getColumn(6).setCellRenderer(new ActionButtonRenderer());
         bookTable.getColumnModel().getColumn(6).setCellEditor(new ActionButtonEditor(new JCheckBox()));
 
@@ -214,7 +260,6 @@ public class IndexBookView extends JPanel {
 
         tableContainer.add(topPanel, BorderLayout.NORTH);
         tableContainer.add(scrollPane, BorderLayout.CENTER);
-
         mainPanel.add(tableContainer, BorderLayout.CENTER);
 
         return mainPanel;
@@ -233,12 +278,10 @@ public class IndexBookView extends JPanel {
 
         button.addMouseListener(new MouseAdapter() {
             Color original = bgColor;
-
             @Override
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(bgColor.darker());
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(original);
@@ -324,19 +367,12 @@ public class IndexBookView extends JPanel {
     }
 
     class ActionButtonRenderer extends JPanel implements javax.swing.table.TableCellRenderer {
-        private JButton btnShow, btnEdit, btnDelete;
-
         public ActionButtonRenderer() {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
             setBackground(Color.WHITE);
-
-            btnShow = createSmallButton("Detail", new Color(52, 152, 219));
-            btnEdit = createSmallButton("Edit", PRIMARY_COLOR);
-            btnDelete = createSmallButton("Hapus", DANGER_COLOR);
-
-            add(btnShow);
-            add(btnEdit);
-            add(btnDelete);
+            add(createSmallButton("Detail", new Color(52, 152, 219)));
+            add(createSmallButton("Edit", PRIMARY_COLOR));
+            add(createSmallButton("Hapus", DANGER_COLOR));
         }
 
         @Override
@@ -348,28 +384,25 @@ public class IndexBookView extends JPanel {
 
     class ActionButtonEditor extends DefaultCellEditor {
         private JPanel panel;
-        private JButton btnShow, btnEdit, btnDelete;
         private int bookId;
 
         public ActionButtonEditor(JCheckBox checkBox) {
             super(checkBox);
-
             panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
             panel.setBackground(Color.WHITE);
 
-            btnShow = createSmallButton("Detail", new Color(52, 152, 219));
+            JButton btnShow = createSmallButton("Detail", new Color(52, 152, 219));
+            JButton btnEdit = createSmallButton("Edit", PRIMARY_COLOR);
+            JButton btnDelete = createSmallButton("Hapus", DANGER_COLOR);
+
             btnShow.addActionListener(e -> {
                 fireEditingStopped();
                 openShowDialog(bookId);
             });
-
-            btnEdit = createSmallButton("Edit", PRIMARY_COLOR);
             btnEdit.addActionListener(e -> {
                 fireEditingStopped();
                 openEditDialog(bookId);
             });
-
-            btnDelete = createSmallButton("Hapus", DANGER_COLOR);
             btnDelete.addActionListener(e -> {
                 fireEditingStopped();
                 deleteBook(bookId);

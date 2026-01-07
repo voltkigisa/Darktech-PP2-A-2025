@@ -20,9 +20,7 @@ public class IndexFineView extends JPanel {
     private JTable fineTable;
     private DefaultTableModel tableModel;
     private User currentUser;
-    private JTextField searchField;
-    private JComboBox<String> filterStatus;
-    private List<Fine> allFines;
+    private Runnable onBackCallback;
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);
@@ -40,6 +38,9 @@ public class IndexFineView extends JPanel {
         this.currentUser = currentUser != null ? currentUser : new User(1, "admin", "", "Admin", "ADMIN");
         initComponents();
         loadData();
+    }
+    public void setOnBackCallback(Runnable callback) {
+        this.onBackCallback = callback;
     }
 
     private void initComponents() {
@@ -79,8 +80,49 @@ public class IndexFineView extends JPanel {
         titlePanel.add(lblSubtitle);
 
         headerPanel.add(titlePanel, BorderLayout.WEST);
+        headerPanel.add(createBackButton(), BorderLayout.EAST);
 
         return headerPanel;
+    }
+
+    private JButton createBackButton() {
+        Color greenSuccess = new Color(16, 185, 129);
+        JButton button = new JButton("← Kembali") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                g2.setColor(getForeground());
+                FontMetrics fm = g2.getFontMetrics();
+                String text = getText();
+                int x = (getWidth() - fm.stringWidth(text)) / 2;
+                int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+                g2.drawString(text, x, y);
+                g2.dispose();
+            }
+        };
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(greenSuccess);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setPreferredSize(new Dimension(120, 38));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        button.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { button.setBackground(new Color(5, 150, 105)); }
+            public void mouseExited(MouseEvent e) { button.setBackground(greenSuccess); }
+        });
+
+        button.addActionListener(e -> {
+            if (onBackCallback != null) {
+                onBackCallback.run();
+            }
+        });
+        return button;
     }
 
     private JPanel createTablePanel() {
@@ -220,6 +262,9 @@ public class IndexFineView extends JPanel {
         button.setBorderPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(75, 32));
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
+        
         return button;
     }
 
@@ -261,13 +306,8 @@ public class IndexFineView extends JPanel {
 
     private void openPayDialog(int fineId) {
         Window window = SwingUtilities.getWindowAncestor(this);
-        PayFineDialog payDialog = new PayFineDialog(window, fineId, currentUser, this);
-        payDialog.setVisible(true);
     }
 
-    /**
-     * Custom renderer to highlight paid/unpaid status
-     */
     class StatusRowRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
@@ -275,7 +315,6 @@ public class IndexFineView extends JPanel {
             Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             setHorizontalAlignment(SwingConstants.CENTER);
 
-            // Check if this row is unpaid
             Object actionValue = table.getValueAt(row, 6);
             boolean isUnpaid = actionValue != null && actionValue.toString().contains("|UNPAID");
 
@@ -300,7 +339,6 @@ public class IndexFineView extends JPanel {
                     }
                 }
             }
-
             return c;
         }
     }
@@ -312,7 +350,6 @@ public class IndexFineView extends JPanel {
         public ActionButtonRenderer() {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
             setBackground(Color.WHITE);
-
             btnPay = createSmallButton("Bayar", SUCCESS_COLOR);
             lblPaid = new JLabel("Lunas");
             lblPaid.setFont(new Font("Segoe UI", Font.ITALIC, 12));
@@ -323,9 +360,7 @@ public class IndexFineView extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
             removeAll();
-
             boolean isUnpaid = value != null && value.toString().contains("|UNPAID");
-
             if (isUnpaid) {
                 add(btnPay);
                 setBackground(new Color(255, 250, 230));
@@ -333,7 +368,6 @@ public class IndexFineView extends JPanel {
                 add(lblPaid);
                 setBackground(new Color(235, 255, 240));
             }
-
             return this;
         }
     }
@@ -347,16 +381,13 @@ public class IndexFineView extends JPanel {
 
         public ActionButtonEditor(JCheckBox checkBox) {
             super(checkBox);
-
             panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
             panel.setBackground(Color.WHITE);
-
             btnPay = createSmallButton("Bayar", SUCCESS_COLOR);
             btnPay.addActionListener(e -> {
                 fireEditingStopped();
                 openPayDialog(fineId);
             });
-
             lblPaid = new JLabel("Lunas");
             lblPaid.setFont(new Font("Segoe UI", Font.ITALIC, 12));
             lblPaid.setForeground(new Color(127, 140, 141));
@@ -366,13 +397,11 @@ public class IndexFineView extends JPanel {
         public Component getTableCellEditorComponent(JTable table, Object value,
                 boolean isSelected, int row, int column) {
             panel.removeAll();
-
             if (value != null) {
                 String[] parts = value.toString().split("\\|");
                 this.fineId = Integer.parseInt(parts[0]);
                 this.isUnpaid = parts.length > 1 && parts[1].equals("UNPAID");
             }
-
             if (isUnpaid) {
                 panel.add(btnPay);
                 panel.setBackground(new Color(255, 250, 230));
@@ -380,13 +409,10 @@ public class IndexFineView extends JPanel {
                 panel.add(lblPaid);
                 panel.setBackground(new Color(235, 255, 240));
             }
-
             return panel;
         }
 
         @Override
-        public Object getCellEditorValue() {
-            return fineId;
-        }
+        public Object getCellEditorValue() { return fineId; }
     }
 }
