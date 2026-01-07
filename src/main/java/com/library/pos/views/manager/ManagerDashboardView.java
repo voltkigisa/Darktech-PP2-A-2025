@@ -340,6 +340,7 @@ public class ManagerDashboardView extends JFrame {
     com.library.pos.views.manager.books.IndexBookView bookView = 
         new com.library.pos.views.manager.books.IndexBookView();
 
+    // HUBUNGKAN CALLBACK KE DASHBOARD
     bookView.setOnBackCallback(() -> {
         showDashboard();
     });
