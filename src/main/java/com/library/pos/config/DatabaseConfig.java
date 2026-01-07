@@ -10,7 +10,6 @@ import java.sql.SQLException;
  */
 public class DatabaseConfig {
 
-    // Database connection parameters
     private static final String HOST = "pongo.kencang.com";
     private static final String PORT = "3306";
     private static final String DATABASE = "academyc_tugas-pp2";
@@ -29,7 +28,7 @@ public class DatabaseConfig {
 
     /**
      * Get the singleton instance of DatabaseConfig.
-     * 
+     *
      * @return DatabaseConfig instance
      */
     public static synchronized DatabaseConfig getInstance() {
@@ -42,7 +41,7 @@ public class DatabaseConfig {
     /**
      * Get a connection to the database.
      * Creates a new connection if none exists or if the existing one is closed.
-     * 
+     *
      * @return Connection object
      * @throws SQLException if connection fails
      */

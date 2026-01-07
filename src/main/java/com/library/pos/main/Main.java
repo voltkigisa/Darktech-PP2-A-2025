@@ -1,8 +1,6 @@
 package com.library.pos.main;
 
-import com.library.pos.controllers.AuthController;
-import com.library.pos.controllers.MainController;
-import com.library.pos.views.LoginView;
+import com.library.pos.views.auth.LoginView;
 
 import javax.swing.*;
 
@@ -22,13 +20,10 @@ public class Main {
         
         // Run on Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
-            // Initialize controllers
-            AuthController authController = new AuthController();
-            MainController mainController = new MainController(authController);
-            
-            // Create and show login view
-            LoginView loginView = new LoginView(mainController, authController);
+            // Show Login screen first
+            LoginView loginView = new LoginView();
             loginView.setVisible(true);
         });
     }
 }
+        
