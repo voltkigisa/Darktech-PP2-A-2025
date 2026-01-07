@@ -1,6 +1,7 @@
 package com.library.pos.views.admin.member;
 
 import com.library.pos.controllers.admin.MemberController;
+import com.library.pos.views.admin.AdminDashboardView;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -14,6 +15,7 @@ public class KelolaMemberView extends JPanel {
     private DefaultTableModel tableModel;
     private JTextField txtMemberCode, txtName, txtAge, txtPhone, txtAddress;
     private int selectedId = -1;
+    private AdminDashboardView dashboard; // Reference to dashboard for refresh
 
     // Warna Tema (Senada dengan Dashboard)
     private final Color PRIMARY_COLOR = new Color(99, 102, 241); // Indigo
@@ -21,7 +23,14 @@ public class KelolaMemberView extends JPanel {
     private final Color BG_COLOR = Color.WHITE;
     private final Color TEXT_COLOR = new Color(31, 41, 55);
 
+    // Constructor without dashboard (for backward compatibility)
     public KelolaMemberView() {
+        this(null);
+    }
+
+    // Constructor with dashboard reference
+    public KelolaMemberView(AdminDashboardView dashboard) {
+        this.dashboard = dashboard;
         setLayout(new BorderLayout(30, 0));
         setBackground(new Color(245, 247, 250)); // Light Gray Background
         setBorder(new EmptyBorder(30, 30, 30, 30));
@@ -134,6 +143,10 @@ public class KelolaMemberView extends JPanel {
                 JOptionPane.showMessageDialog(this, "Success: Member saved!");
                 refreshTable();
                 clearForm();
+                // Refresh dashboard statistics if available
+                if (dashboard != null) {
+                    dashboard.refreshDashboardStats();
+                }
             }
         });
 
@@ -156,6 +169,10 @@ public class KelolaMemberView extends JPanel {
                     JOptionPane.showMessageDialog(this, "Success: Data updated!");
                     refreshTable();
                     clearForm();
+                    // Refresh dashboard statistics if available
+                    if (dashboard != null) {
+                        dashboard.refreshDashboardStats();
+                    }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a member from the table.");
@@ -170,6 +187,10 @@ public class KelolaMemberView extends JPanel {
                     if (controller.delete(selectedId)) {
                         refreshTable();
                         clearForm();
+                        // Refresh dashboard statistics if available
+                        if (dashboard != null) {
+                            dashboard.refreshDashboardStats();
+                        }
                     }
                 }
             }

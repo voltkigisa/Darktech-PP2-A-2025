@@ -241,6 +241,10 @@ public class EditUserView extends JDialog {
 
         if (controller.updateUser(user.getId(), username, password, name, role)) {
             parentView.loadData();
+            // Refresh dashboard statistics if available
+            if (parentView.getDashboard() != null) {
+                parentView.getDashboard().refreshDashboardStats();
+            }
             dispose();
         }
     }

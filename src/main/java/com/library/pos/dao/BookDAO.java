@@ -31,6 +31,27 @@ public class BookDAO {
         return books;
     }
 
+    /**
+     * Count all books
+     */
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM books";
+
+        try (Connection conn = DatabaseConfig.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     public Book getById(int id) {
         String sql = "SELECT * FROM books WHERE id = ?";
 

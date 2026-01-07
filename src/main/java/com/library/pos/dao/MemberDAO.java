@@ -28,6 +28,21 @@ public class MemberDAO {
         return list;
     }
 
+    /**
+     * Count all members
+     */
+    public int count() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM members";
+        try (Connection conn = DatabaseConfig.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
     public void insert(Member m) throws SQLException {
         String sql = "INSERT INTO members (name, member_code, age, phone, address) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConfig.getInstance().getConnection();

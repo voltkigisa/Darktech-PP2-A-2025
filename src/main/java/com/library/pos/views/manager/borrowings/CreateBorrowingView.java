@@ -432,6 +432,10 @@ public class CreateBorrowingView extends JDialog {
         // Create with validation
         if (controller.createBorrowing(borrowing, borrowingDetails)) {
             parentView.loadData();
+            // Refresh dashboard statistics if available
+            if (parentView.getDashboard() != null) {
+                parentView.getDashboard().refreshDashboardStats();
+            }
             dispose();
         }
     }

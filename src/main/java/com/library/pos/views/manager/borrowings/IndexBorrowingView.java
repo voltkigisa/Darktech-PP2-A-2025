@@ -2,6 +2,7 @@ package com.library.pos.views.manager.borrowings;
 
 import com.library.pos.controllers.BorrowingController;
 import com.library.pos.models.Borrowing;
+import com.library.pos.views.admin.AdminDashboardView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -23,6 +24,7 @@ public class IndexBorrowingView extends JPanel {
     private JTextField searchField;
     private JComboBox<String> filterStatus;
     private List<Borrowing> allBorrowings;
+    private AdminDashboardView dashboard; // Reference to dashboard for refresh
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);
@@ -33,7 +35,14 @@ public class IndexBorrowingView extends JPanel {
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    // Constructor without dashboard (for backward compatibility)
     public IndexBorrowingView() {
+        this(null);
+    }
+
+    // Constructor with dashboard reference
+    public IndexBorrowingView(AdminDashboardView dashboard) {
+        this.dashboard = dashboard;
         this.controller = new BorrowingController();
         initComponents();
         loadData();
@@ -257,6 +266,13 @@ public class IndexBorrowingView extends JPanel {
         filterData();
     }
 
+    /**
+     * Get dashboard reference for refresh callbacks
+     */
+    public AdminDashboardView getDashboard() {
+        return dashboard;
+    }
+
     private void filterData() {
         tableModel.setRowCount(0);
         String searchText = searchField.getText().toLowerCase();
@@ -309,6 +325,10 @@ public class IndexBorrowingView extends JPanel {
     private void deleteBorrowing(int borrowingId) {
         if (controller.deleteBorrowing(borrowingId)) {
             loadData();
+            // Refresh dashboard statistics if available
+            if (dashboard != null) {
+                dashboard.refreshDashboardStats();
+            }
         }
     }
 
