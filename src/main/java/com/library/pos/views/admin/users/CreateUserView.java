@@ -230,6 +230,10 @@ public class CreateUserView extends JDialog {
 
         if (controller.createUser(username, password, name, role)) {
             parentView.loadData();
+            // Refresh dashboard statistics if available
+            if (parentView.getDashboard() != null) {
+                parentView.getDashboard().refreshDashboardStats();
+            }
             dispose();
         }
     }

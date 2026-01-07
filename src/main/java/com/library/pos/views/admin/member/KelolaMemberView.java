@@ -1,6 +1,7 @@
 package com.library.pos.views.admin.member;
 
 import com.library.pos.controllers.admin.MemberController;
+import com.library.pos.views.admin.AdminDashboardView;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -17,7 +18,9 @@ public class KelolaMemberView extends JPanel {
     private final MemberController controller = new MemberController();
     private JTable table;
     private DefaultTableModel tableModel;
-    private JButton btnAdd;
+    private JTextField txtMemberCode, txtName, txtAge, txtPhone, txtAddress;
+    private int selectedId = -1;
+    private AdminDashboardView dashboard; // Reference to dashboard for refresh
 
     // Palette Warna
     private final Color PRIMARY_COLOR = new Color(59, 130, 246);   // Blue
@@ -26,7 +29,18 @@ public class KelolaMemberView extends JPanel {
     private final Color DARK_COLOR = new Color(31, 41, 55);
     private final Color LIGHT_BG = new Color(249, 250, 251);
 
+    // Constructor without dashboard (for backward compatibility)
     public KelolaMemberView() {
+        this(null);
+    }
+
+    // Constructor with dashboard reference
+    public KelolaMemberView(AdminDashboardView dashboard) {
+        this.dashboard = dashboard;
+        setLayout(new BorderLayout(30, 0));
+        setBackground(new Color(245, 247, 250)); // Light Gray Background
+        setBorder(new EmptyBorder(30, 30, 30, 30));
+
         initComponents();
         loadData();
     }
@@ -121,28 +135,22 @@ public class KelolaMemberView extends JPanel {
         return mainPanel;
     }
 
-    private void setupTableStyle() {
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        table.setRowHeight(60);
-        table.setShowVerticalLines(false);
-        table.setGridColor(new Color(240, 240, 240));
-        table.setSelectionBackground(new Color(235, 245, 255));
+        tablePanel.add(searchPanel, BorderLayout.NORTH);
+        tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
+        add(tablePanel, BorderLayout.CENTER);
+        setupTableStyle();
 
-        // RENDERER UNTUK TEKS HITAM PEKAT
-        DefaultTableCellRenderer blackTextRenderer = new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (!isSelected) {
-                    c.setForeground(Color.BLACK); // Paksa Hitam
-                    c.setBackground(Color.WHITE);
-                } else {
-                    c.setForeground(Color.BLACK); // Tetap hitam saat dipilih agar terbaca
-                    c.setBackground(new Color(200, 220, 240));
+        // --- LOGIKA EVENT ---
+        btnSave.addActionListener(e -> {
+            if (controller.save(txtMemberCode.getText(), txtName.getText(), txtAge.getText(), txtPhone.getText(),
+                    txtAddress.getText())) {
+                JOptionPane.showMessageDialog(this, "Success: Member saved!");
+                refreshTable();
+                clearForm();
+                // Refresh dashboard statistics if available
+                if (dashboard != null) {
+                    dashboard.refreshDashboardStats();
                 }
-                setHorizontalAlignment(JLabel.CENTER);
-                ((JComponent)c).setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-                return c;
             }
         };
 
@@ -151,36 +159,38 @@ public class KelolaMemberView extends JPanel {
             table.getColumnModel().getColumn(i).setCellRenderer(blackTextRenderer);
         }
 
-        // Header Style
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        table.getTableHeader().setBackground(DARK_COLOR);
-        table.getTableHeader().setForeground(Color.WHITE);
-        table.getTableHeader().setPreferredSize(new Dimension(0, 45));
+        btnUpdate.addActionListener(e -> {
+            if (selectedId != -1) {
+                if (controller.update(selectedId, txtMemberCode.getText(), txtName.getText(), txtAge.getText(),
+                        txtPhone.getText(), txtAddress.getText())) {
+                    JOptionPane.showMessageDialog(this, "Success: Data updated!");
+                    refreshTable();
+                    clearForm();
+                    // Refresh dashboard statistics if available
+                    if (dashboard != null) {
+                        dashboard.refreshDashboardStats();
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a member from the table.");
+            }
+        });
 
-        // Column Widths
-        table.getColumnModel().getColumn(0).setPreferredWidth(50);
-        table.getColumnModel().getColumn(6).setPreferredWidth(280);
-
-        // Aksi Column
-        table.getColumnModel().getColumn(6).setCellRenderer(new ActionButtonRenderer());
-        table.getColumnModel().getColumn(6).setCellEditor(new ActionButtonEditor(new JCheckBox()));
-    }
-
-    private JButton createButton(String text, Color bgColor) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        button.setForeground(Color.WHITE);
-        button.setBackground(bgColor);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setOpaque(true);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(160, 40));
-        button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) { button.setBackground(bgColor.darker()); }
-            @Override
-            public void mouseExited(MouseEvent e) { button.setBackground(bgColor); }
+        btnDelete.addActionListener(e -> {
+            if (selectedId != -1) {
+                int confirm = JOptionPane.showConfirmDialog(this, "Delete this member?", "Confirmation",
+                        JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    if (controller.delete(selectedId)) {
+                        refreshTable();
+                        clearForm();
+                        // Refresh dashboard statistics if available
+                        if (dashboard != null) {
+                            dashboard.refreshDashboardStats();
+                        }
+                    }
+                }
+            }
         });
         return button;
     }

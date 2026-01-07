@@ -2,6 +2,7 @@ package com.library.pos.views.admin.users;
 
 import com.library.pos.controllers.admin.AdminUserController;
 import com.library.pos.models.User;
+import com.library.pos.views.admin.AdminDashboardView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -23,6 +24,7 @@ public class IndexUserView extends JPanel {
     private JTextField searchField;
     private JComboBox<String> filterRole;
     private List<User> allUsers;
+    private AdminDashboardView dashboard; // Reference to dashboard for refresh
 
     // Color scheme - matching dashboard
     private final Color PRIMARY_COLOR = new Color(59, 130, 246);
@@ -32,7 +34,14 @@ public class IndexUserView extends JPanel {
     private final Color DARK_COLOR = new Color(31, 41, 55);
     private final Color LIGHT_BG = new Color(249, 250, 251);
 
+    // Constructor without dashboard (for backward compatibility)
     public IndexUserView() {
+        this(null);
+    }
+
+    // Constructor with dashboard reference
+    public IndexUserView(AdminDashboardView dashboard) {
+        this.dashboard = dashboard;
         this.controller = new AdminUserController();
         initComponents();
         loadData();
@@ -277,6 +286,13 @@ public class IndexUserView extends JPanel {
         filterData();
     }
 
+    /**
+     * Get dashboard reference for refresh callbacks
+     */
+    public AdminDashboardView getDashboard() {
+        return dashboard;
+    }
+
     private void filterData() {
         tableModel.setRowCount(0);
         String searchText = searchField.getText().toLowerCase();
@@ -331,6 +347,10 @@ public class IndexUserView extends JPanel {
     private void deleteUser(int userId) {
         if (controller.deleteUser(userId)) {
             loadData();
+            // Refresh dashboard statistics if available
+            if (dashboard != null) {
+                dashboard.refreshDashboardStats();
+            }
         }
     }
 

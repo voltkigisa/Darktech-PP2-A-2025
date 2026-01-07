@@ -326,6 +326,10 @@ public class CreateBookView extends JDialog {
 
         if (controller.createBook(book)) {
             parentView.loadData();
+            // Refresh dashboard statistics if available
+            if (parentView.getDashboard() != null) {
+                parentView.getDashboard().refreshDashboardStats();
+            }
             dispose();
         }
     }

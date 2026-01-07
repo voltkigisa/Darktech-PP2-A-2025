@@ -2,6 +2,7 @@ package com.library.pos.views.admin.books;
 
 import com.library.pos.controllers.BookController;
 import com.library.pos.models.Book;
+import com.library.pos.views.admin.AdminDashboardView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -22,6 +23,7 @@ public class IndexBookView extends JPanel {
     private JTextField searchField;
     private JComboBox<String> filterGenre;
     private List<Book> allBooks;
+    private AdminDashboardView dashboard; // Reference to dashboard for refresh
 
     private final Color PRIMARY_COLOR = new Color(41, 128, 185);
     private final Color SUCCESS_COLOR = new Color(39, 174, 96);
@@ -29,7 +31,14 @@ public class IndexBookView extends JPanel {
     private final Color DARK_COLOR = new Color(44, 62, 80);
     private final Color LIGHT_BG = new Color(236, 240, 241);
 
+    // Constructor without dashboard (for backward compatibility)
     public IndexBookView() {
+        this(null);
+    }
+
+    // Constructor with dashboard reference
+    public IndexBookView(AdminDashboardView dashboard) {
+        this.dashboard = dashboard;
         this.controller = new BookController();
         initComponents();
         loadData();
@@ -270,6 +279,13 @@ public class IndexBookView extends JPanel {
         filterData();
     }
 
+    /**
+     * Get dashboard reference for refresh callbacks
+     */
+    public AdminDashboardView getDashboard() {
+        return dashboard;
+    }
+
     private void filterData() {
         tableModel.setRowCount(0);
         String searchText = searchField.getText().toLowerCase();
@@ -325,6 +341,10 @@ public class IndexBookView extends JPanel {
     private void deleteBook(int bookId) {
         if (controller.deleteBook(bookId)) {
             loadData();
+            // Refresh dashboard statistics if available
+            if (dashboard != null) {
+                dashboard.refreshDashboardStats();
+            }
         }
     }
 

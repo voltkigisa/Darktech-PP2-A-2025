@@ -342,6 +342,10 @@ public class EditBookView extends JDialog {
 
         if (controller.updateBook(book)) {
             parentView.loadData();
+            // Refresh dashboard statistics if available
+            if (parentView.getDashboard() != null) {
+                parentView.getDashboard().refreshDashboardStats();
+            }
             dispose();
         }
     }

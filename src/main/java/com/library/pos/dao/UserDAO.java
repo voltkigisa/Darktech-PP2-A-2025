@@ -223,6 +223,52 @@ public class UserDAO {
     }
 
     /**
+     * Count users by role
+     */
+    public int countByRole(String role) {
+        String query = "SELECT COUNT(*) FROM users WHERE role = ?";
+
+        try (Connection conn = dbConfig.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, role);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                System.out.println("UserDAO.countByRole('" + role + "') = " + count);
+                return count;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error counting users by role: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Count all users
+     */
+    public int count() {
+        String query = "SELECT COUNT(*) FROM users";
+
+        try (Connection conn = dbConfig.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error counting users: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
      * Map ResultSet to User object
      */
     private User mapResultSetToUser(ResultSet rs) throws SQLException {

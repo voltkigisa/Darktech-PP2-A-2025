@@ -284,6 +284,48 @@ public class BorrowingDAO {
         return false;
     }
 
+    /**
+     * Count all borrowings
+     */
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM borrowings";
+
+        try (Connection conn = DatabaseConfig.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Count active borrowings (status = 'BORROWED' or 'OVERDUE')
+     */
+    public int countActive() {
+        String sql = "SELECT COUNT(*) FROM borrowings WHERE status IN ('BORROWED', 'OVERDUE')";
+
+        try (Connection conn = DatabaseConfig.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     private Borrowing mapResultSetToBorrowing(ResultSet rs) throws SQLException {
         Borrowing borrowing = new Borrowing();
         borrowing.setId(rs.getInt("id"));

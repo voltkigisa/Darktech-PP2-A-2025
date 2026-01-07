@@ -1,6 +1,10 @@
 package com.library.pos.views.admin;
 
 import com.library.pos.models.User;
+import com.library.pos.dao.BookDAO;
+import com.library.pos.dao.MemberDAO;
+import com.library.pos.dao.BorrowingDAO;
+import com.library.pos.dao.UserDAO;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,8 +20,29 @@ public class AdminDashboardView extends JFrame {
     private JPanel contentPanel;
     private JButton selectedMenuButton = null;
 
+    // DAOs for fetching statistics
+    private final BookDAO bookDAO;
+    private final MemberDAO memberDAO;
+    private final BorrowingDAO borrowingDAO;
+    private final UserDAO userDAO;
+
+    // Stat card labels for dynamic updates
+    private JLabel totalBooksValue;
+    private JLabel totalMembersValue;
+    private JLabel activeLoansValue;
+    private JLabel totalManagersValue;
+
+    // Flag to track if stats need refreshing
+    private boolean statsNeedRefresh = false;
+
     public AdminDashboardView(User user) {
         this.currentUser = user;
+
+        // Initialize DAOs
+        this.bookDAO = new BookDAO();
+        this.memberDAO = new MemberDAO();
+        this.borrowingDAO = new BorrowingDAO();
+        this.userDAO = new UserDAO();
 
         setTitle("Library POS System - Admin Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -240,6 +265,18 @@ public class AdminDashboardView extends JFrame {
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setForeground(new Color(31, 41, 55));
 
+        // Button panel for Export PDF and Logout
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttonPanel.setBackground(Color.WHITE);
+
+        // Export PDF button
+        JButton exportButton = createStyledButton("📄 Export PDF", new Color(16, 185, 129));
+        exportButton.addActionListener(e -> {
+            com.library.pos.controllers.ReportController reportController =
+                new com.library.pos.controllers.ReportController();
+            reportController.exportToPDF(this, currentUser);
+        });
+
         JButton logoutButton = createStyledButton("Logout", new Color(239, 68, 68));
         logoutButton.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this,
@@ -256,8 +293,11 @@ public class AdminDashboardView extends JFrame {
             }
         });
 
+        buttonPanel.add(exportButton);
+        buttonPanel.add(logoutButton);
+
         header.add(titleLabel, BorderLayout.WEST);
-        header.add(logoutButton, BorderLayout.EAST);
+        header.add(buttonPanel, BorderLayout.EAST);
 
         return header;
     }
@@ -336,16 +376,36 @@ public class AdminDashboardView extends JFrame {
         welcomePanel.add(Box.createRigidArea(new Dimension(20, 10)));
         welcomePanel.add(descLabel);
 
-        // Stats Panel
+        // Stats Panel with real data
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 20, 0));
         statsPanel.setBackground(new Color(245, 247, 250));
         statsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
         statsPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
-        statsPanel.add(createStatCard("", "Total Books", "0", new Color(59, 130, 246)));
-        statsPanel.add(createStatCard("", "Total Members", "0", new Color(16, 185, 129)));
-        statsPanel.add(createStatCard("", "Active Loans", "0", new Color(245, 158, 11)));
-        statsPanel.add(createStatCard("", "Total Managers", "1", new Color(139, 92, 246)));
+        // Fetch statistics
+        int totalBooks = bookDAO.count();
+        int totalMembers = 0;
+        try {
+            totalMembers = memberDAO.count();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int activeLoans = borrowingDAO.countActive();
+        int totalUsers = userDAO.count(); // Changed to count all users
+
+        // Debug output
+        System.out.println("=== showDashboardContent Stats ===");
+        System.out.println("Total Books: " + totalBooks);
+        System.out.println("Total Members: " + totalMembers);
+        System.out.println("Active Loans: " + activeLoans);
+        System.out.println("Total Users: " + totalUsers);
+        System.out.println("===================================");
+
+        // Create stat cards and store value labels
+        statsPanel.add(createStatCard("", "Total Books", String.valueOf(totalBooks), new Color(59, 130, 246), "books"));
+        statsPanel.add(createStatCard("", "Total Members", String.valueOf(totalMembers), new Color(16, 185, 129), "members"));
+        statsPanel.add(createStatCard("", "Active Loans", String.valueOf(activeLoans), new Color(245, 158, 11), "loans"));
+        statsPanel.add(createStatCard("", "Total Users", String.valueOf(totalUsers), new Color(139, 92, 246), "managers"));
 
         dashboardPanel.add(welcomePanel);
         dashboardPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -357,7 +417,7 @@ public class AdminDashboardView extends JFrame {
         contentPanel.repaint();
     }
 
-    private JPanel createStatCard(String icon, String title, String value, Color accentColor) {
+    private JPanel createStatCard(String icon, String title, String value, Color accentColor, String identifier) {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout());
         card.setBackground(Color.WHITE);
@@ -382,6 +442,22 @@ public class AdminDashboardView extends JFrame {
         valueLabel.setForeground(accentColor);
         valueLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Store references to value labels for updates
+        switch (identifier) {
+            case "books":
+                totalBooksValue = valueLabel;
+                break;
+            case "members":
+                totalMembersValue = valueLabel;
+                break;
+            case "loans":
+                activeLoansValue = valueLabel;
+                break;
+            case "managers":
+                totalManagersValue = valueLabel;
+                break;
+        }
+
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         titleLabel.setForeground(new Color(107, 114, 128));
@@ -398,11 +474,61 @@ public class AdminDashboardView extends JFrame {
         return card;
     }
 
+    /**
+     * Refresh dashboard statistics
+     * Call this method after any data changes (add/edit/delete operations)
+     */
+    public void refreshDashboardStats() {
+        // Set flag to refresh when dashboard is shown again
+        statsNeedRefresh = true;
+
+        SwingUtilities.invokeLater(() -> {
+            try {
+                // Fetch updated statistics
+                int totalBooks = bookDAO.count();
+                int totalMembers = memberDAO.count();
+                int activeLoans = borrowingDAO.countActive();
+                int totalUsers = userDAO.count(); // Changed to count all users
+
+                // Debug output
+                System.out.println("=== Dashboard Stats Refresh ===");
+                System.out.println("Total Books: " + totalBooks);
+                System.out.println("Total Members: " + totalMembers);
+                System.out.println("Active Loans: " + activeLoans);
+                System.out.println("Total Users: " + totalUsers);
+                System.out.println("===============================");
+
+                // Update labels if they exist
+                if (totalBooksValue != null) {
+                    totalBooksValue.setText(String.valueOf(totalBooks));
+                }
+                if (totalMembersValue != null) {
+                    totalMembersValue.setText(String.valueOf(totalMembers));
+                }
+                if (activeLoansValue != null) {
+                    activeLoansValue.setText(String.valueOf(activeLoans));
+                }
+                if (totalManagersValue != null) {
+                    totalManagersValue.setText(String.valueOf(totalUsers));
+                }
+
+                // Force repaint
+                if (contentPanel != null) {
+                    contentPanel.revalidate();
+                    contentPanel.repaint();
+                }
+            } catch (Exception e) {
+                System.err.println("Error refreshing dashboard stats: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+    }
+
     private void showKelolaManagerContent() {
         contentPanel.removeAll();
 
-        // Directly embed the user management panel
-        com.library.pos.views.admin.users.IndexUserView userPanel = new com.library.pos.views.admin.users.IndexUserView();
+        // Directly embed the user management panel with dashboard reference
+        com.library.pos.views.admin.users.IndexUserView userPanel = new com.library.pos.views.admin.users.IndexUserView(this);
 
         contentPanel.add(userPanel, BorderLayout.CENTER);
         contentPanel.revalidate();
@@ -412,7 +538,7 @@ public class AdminDashboardView extends JFrame {
     private void showKelolaBukuContent() {
         contentPanel.removeAll();
 
-        com.library.pos.views.admin.books.IndexBookView bookView = new com.library.pos.views.admin.books.IndexBookView();
+        com.library.pos.views.admin.books.IndexBookView bookView = new com.library.pos.views.admin.books.IndexBookView(this);
 
         contentPanel.add(bookView, BorderLayout.CENTER);
         contentPanel.revalidate();
@@ -423,7 +549,7 @@ public class AdminDashboardView extends JFrame {
         contentPanel.removeAll(); // Hapus tulisan "sedang dalam pengembangan"
 
         // Panggil tampilan KelolaMemberView yang sudah kita perbaiki tadi
-        com.library.pos.views.admin.member.KelolaMemberView memberView = new com.library.pos.views.admin.member.KelolaMemberView();
+        com.library.pos.views.admin.member.KelolaMemberView memberView = new com.library.pos.views.admin.member.KelolaMemberView(this);
 
         contentPanel.add(memberView, BorderLayout.CENTER); // Masukkan form & tabel ke dashboard
 
@@ -434,8 +560,9 @@ public class AdminDashboardView extends JFrame {
     private void showTransaksiContent() {
         contentPanel.removeAll();
 
-        // Embed the borrowing management panel
-        com.library.pos.views.manager.borrowings.IndexBorrowingView borrowingView = new com.library.pos.views.manager.borrowings.IndexBorrowingView();
+        // Embed the borrowing management panel with dashboard reference
+        com.library.pos.views.manager.borrowings.IndexBorrowingView borrowingView =
+            new com.library.pos.views.manager.borrowings.IndexBorrowingView(this);
 
         contentPanel.add(borrowingView, BorderLayout.CENTER);
         contentPanel.revalidate();
