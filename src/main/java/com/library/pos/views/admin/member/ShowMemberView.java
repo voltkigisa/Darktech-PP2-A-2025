@@ -15,11 +15,13 @@ public class ShowMemberView extends JDialog {
     private String code, name, age, phone, address;
     private JButton btnClose, btnEdit;
 
-    // Palette Warna seragam dengan ShowBookView
-    private final Color PRIMARY_COLOR = new Color(41, 128, 185);
-    private final Color DARK_COLOR = new Color(44, 62, 80);
-    private final Color LIGHT_BG = new Color(236, 240, 241);
-    private final Color INFO_BG = new Color(52, 152, 219, 20); // Biru Transparan
+    // Palette Warna - Standardized
+    private final Color PRIMARY_COLOR = new Color(59, 130, 246); // Blue
+    private final Color SUCCESS_COLOR = new Color(16, 185, 129); // Green
+    private final Color SECONDARY_COLOR = new Color(149, 165, 166); // Gray
+    private final Color DARK_COLOR = new Color(31, 41, 55);
+    private final Color LIGHT_BG = new Color(249, 250, 251);
+    private final Color INFO_BG = new Color(59, 130, 246, 20); // Blue Transparent
 
     public ShowMemberView(KelolaMemberView parent, int id, String code, String name, String age, String phone, String address) {
         super(JOptionPane.getFrameForComponent(parent), "Member Details", true);
@@ -89,7 +91,7 @@ public class ShowMemberView extends JDialog {
 
         JLabel iconLabel = new JLabel("MEMBER");
         iconLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        iconLabel.setForeground(new Color(52, 152, 219));
+        iconLabel.setForeground(PRIMARY_COLOR);
         iconPanel.add(iconLabel);
 
         detailContainer.add(iconPanel);
@@ -121,7 +123,7 @@ public class ShowMemberView extends JDialog {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(INFO_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(52, 152, 219), 1),
+                BorderFactory.createLineBorder(PRIMARY_COLOR, 1),
                 BorderFactory.createEmptyBorder(10, 15, 10, 15)
         ));
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -129,7 +131,7 @@ public class ShowMemberView extends JDialog {
 
         JLabel lblLabel = new JLabel(label);
         lblLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        lblLabel.setForeground(new Color(52, 73, 94));
+        lblLabel.setForeground(DARK_COLOR);
         lblLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblValue = new JLabel(value != null && !value.isEmpty() ? value : "-");

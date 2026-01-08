@@ -19,11 +19,13 @@ public class EditMemberView extends JDialog {
     private JTextField txtCode, txtName, txtAge, txtPhone, txtAddress;
     private JButton btnUpdate, btnCancel;
 
-    // Palette Warna seragam dengan CreateMemberView kamu
-    private final Color SUCCESS_COLOR = new Color(39, 174, 96);
-    private final Color SECONDARY_COLOR = new Color(149, 165, 166);
-    private final Color DARK_COLOR = new Color(44, 62, 80);
-    private final Color LIGHT_BG = new Color(236, 240, 241);
+    // Palette Warna - Standardized
+    private final Color PRIMARY_COLOR = new Color(59, 130, 246); // Blue
+    private final Color SUCCESS_COLOR = new Color(16, 185, 129); // Green
+    private final Color SECONDARY_COLOR = new Color(149, 165, 166); // Gray
+    private final Color DARK_COLOR = new Color(31, 41, 55);
+    private final Color LIGHT_BG = new Color(249, 250, 251);
+    private final Color INFO_BG = new Color(59, 130, 246, 20); // Blue Transparent
 
     public EditMemberView(KelolaMemberView parent, int id, String code, String name, String age, String phone,
             String address) {
@@ -120,20 +122,20 @@ public class EditMemberView extends JDialog {
     private JPanel createInfoPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(new Color(39, 174, 96, 20));
+        panel.setBackground(INFO_BG); // Blue Transparent
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(39, 174, 96), 1),
+                BorderFactory.createLineBorder(PRIMARY_COLOR, 1),
                 BorderFactory.createEmptyBorder(12, 15, 12, 15)));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblInfo = new JLabel("Edit Member");
         lblInfo.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblInfo.setForeground(new Color(39, 174, 96));
+        lblInfo.setForeground(PRIMARY_COLOR);
 
         JLabel lblDetail = new JLabel(
                 "<html>Modify the record for this library member. All fields are required.</html>");
         lblDetail.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblDetail.setForeground(new Color(52, 73, 94));
+        lblDetail.setForeground(DARK_COLOR);
 
         panel.add(lblInfo);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));

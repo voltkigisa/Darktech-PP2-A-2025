@@ -18,8 +18,12 @@ public class LihatAnggotaView extends JPanel {
     private Runnable onBackCallback;
     private final User currentUser;
 
-    private final Color PRIMARY_COLOR = new Color(99, 102, 241);
-    private final Color DANGER_COLOR = new Color(239, 68, 68);
+    // Palette Warna - Standardized
+    private final Color PRIMARY_COLOR = new Color(59, 130, 246); // Blue
+    private final Color SUCCESS_COLOR = new Color(16, 185, 129); // Green
+    private final Color DANGER_COLOR = new Color(239, 68, 68); // Red
+    private final Color DARK_COLOR = new Color(31, 41, 55);
+    private final Color LIGHT_BG = new Color(249, 250, 251);
     private final Color BG_COLOR = Color.WHITE;
     private final Color TEXT_COLOR = new Color(31, 41, 55);
 

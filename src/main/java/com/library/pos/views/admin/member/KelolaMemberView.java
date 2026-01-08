@@ -135,11 +135,12 @@ public class KelolaMemberView extends JPanel {
 
         mainPanel.add(tableContainer, BorderLayout.CENTER);
 
-        // Setup Action Column
+        // Setup table style FIRST
+        setupTableStyle();
+
+        // Setup Action Column AFTER table style
         table.getColumnModel().getColumn(6).setCellRenderer(new ActionButtonRenderer());
         table.getColumnModel().getColumn(6).setCellEditor(new ActionButtonEditor(new JCheckBox()));
-
-        setupTableStyle();
 
         return mainPanel;
     }
@@ -183,16 +184,16 @@ public class KelolaMemberView extends JPanel {
     // --- INNER CLASSES (RENDERER & EDITOR) ---
 
     class ActionButtonRenderer extends JPanel implements TableCellRenderer {
-        public ActionButtonRenderer() {
-            setLayout(new FlowLayout(FlowLayout.CENTER, 5, 15));
-            setBackground(Color.WHITE);
-            add(createSmallButton("Detail", PRIMARY_COLOR));
-            add(createSmallButton("Edit", new Color(59, 130, 246)));
-            add(createSmallButton("Hapus", DANGER_COLOR));
-        }
-
         @Override
         public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
+            setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+            setBackground(Color.WHITE);
+            removeAll();
+            
+            add(createSmallButton("Detail", PRIMARY_COLOR));
+            add(createSmallButton("Edit", SUCCESS_COLOR));
+            add(createSmallButton("Hapus", DANGER_COLOR));
+            
             return this;
         }
     }
@@ -204,11 +205,11 @@ public class KelolaMemberView extends JPanel {
 
         public ActionButtonEditor(JCheckBox checkBox) {
             super(checkBox);
-            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 15));
+            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
             panel.setBackground(Color.WHITE);
 
             btnDetail = createSmallButton("Detail", PRIMARY_COLOR);
-            btnEdit = createSmallButton("Edit", new Color(59, 130, 246));
+            btnEdit = createSmallButton("Edit", SUCCESS_COLOR);
             btnDelete = createSmallButton("Hapus", DANGER_COLOR);
 
             btnDetail.addActionListener(e -> {
@@ -278,15 +279,16 @@ public class KelolaMemberView extends JPanel {
 
     private void setupTableStyle() {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        table.setRowHeight(35);
+        table.setRowHeight(50); // Increased for action buttons
         table.setShowGrid(false);
         table.setIntercellSpacing(new Dimension(0, 0));
-        table.setSelectionBackground(new Color(99, 102, 241, 30));
+        table.setSelectionBackground(new Color(59, 130, 246, 30));
         table.setSelectionForeground(TEXT_COLOR);
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        for (int i = 0; i < table.getColumnCount(); i++) {
+        // Apply center renderer to all columns EXCEPT the action column (last column)
+        for (int i = 0; i < table.getColumnCount() - 1; i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
     }
